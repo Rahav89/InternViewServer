@@ -6,7 +6,7 @@ namespace InternViewServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Intenrs : ControllerBase
+    public class IntenrsController : ControllerBase
     {
         // GET: api/<Intenrs>
         [HttpGet]
