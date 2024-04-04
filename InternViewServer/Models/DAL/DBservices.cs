@@ -59,6 +59,7 @@
                 {
                     Intern intern = new Intern();//צריך לבצע המרות כי חוזר אובייקט
                     intern.Id = Convert.ToInt32(dataReader["Intern_id"]);//המרות של טיפוסים 
+                    intern.Password_i = dataReader["Password_i"].ToString();
                     intern.First_name = dataReader["First_name"].ToString();
                     intern.Last_name = dataReader["Last_name"].ToString();
                     intern.Interns_year = dataReader["Interns_year"].ToString();
