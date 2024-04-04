@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InternViewServer.Models;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,9 +11,9 @@ namespace InternViewServer.Controllers
     {
         // GET: api/<ProcedureInSurgeryController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<ProcedureInSurgery> Get()
         {
-            return new string[] { "value1", "value2" };
+            return Models.ProcedureInSurgery.Read();
         }
 
         // GET api/<ProcedureInSurgeryController>/5

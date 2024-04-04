@@ -1,8 +1,10 @@
-﻿namespace InternViewServer.Models
+﻿using InternViewServer.Models.DAL;
+
+namespace InternViewServer.Models
 {
     public class Intern
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string First_name { get; set; }
 
         public string Last_name { get; set; }
@@ -11,5 +13,11 @@
 
         public int Interns_rating { get; set; }
 
+
+        static public List<Intern> Read()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadIntern();
+        }
     }
 }
