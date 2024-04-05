@@ -40,5 +40,12 @@ namespace InternViewServer.Controllers
         public void Delete(int id)
         {
         }
+
+        [HttpPost]
+        [Route("LogInIntern")] //use query string
+        public Intern LogInUser([FromBody] Intern i)
+        {
+            return Models.Intern.LogIn(i.Id, i.Password_i);
+        }
     }
 }

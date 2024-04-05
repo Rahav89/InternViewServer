@@ -21,5 +21,19 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.ReadIntern();
         }
+
+        static public Intern LogIn(int id, string password)
+        {
+            DBservices dbs = new DBservices();
+            Intern internComperByPassID = dbs.LogInInternByIDPass(id, password);
+
+            if (internComperByPassID != null)
+            {
+                return internComperByPassID;
+            }
+            throw new Exception("No such intern exists with these details");
+
+        }
+
     }
 }

@@ -85,6 +85,71 @@
 
         }
 
+        //--------------------------------------------------------------------------------------------------
+        // Log in Intern
+        //--------------------------------------------------------------------------------------------------
+        public Intern LogInInternByIDPass(int id, string password)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", id);
+            paramDic.Add("@Password_i", password);
+
+            cmd = CreateCommandWithStoredProcedure("SP_LogIninternByIDPass", con, paramDic); // create the command
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+
+                if (dataReader.HasRows == false)
+                {
+                    return null;
+                }
+
+                Intern intern = new Intern();
+
+                while (dataReader.Read())
+                {
+                    intern.Id = Convert.ToInt32(dataReader["Intern_id"]);//המרות של טיפוסים 
+                    intern.Password_i = dataReader["Password_i"].ToString();
+                    intern.First_name = dataReader["First_name"].ToString();
+                    intern.Last_name = dataReader["Last_name"].ToString();
+                    intern.Interns_year = dataReader["Interns_year"].ToString();
+                    intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);                  
+
+                }
+
+                return intern;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
+
         //--------------------------------
         // This method Reads all  Surgeries
         //--------------------------------
