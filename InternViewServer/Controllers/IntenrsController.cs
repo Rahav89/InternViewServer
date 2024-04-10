@@ -16,6 +16,16 @@ namespace InternViewServer.Controllers
             return Models.Intern.Read();
         }
 
+
+
+        [HttpGet]
+        [Route("FiveRecentInternSurgeries")]
+        public IEnumerable<RecentSurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
+        {
+            return Models.Intern.FiveRecentInternSurgeries(internId);
+        }
+
+
         // GET api/<Intenrs>/5
         [HttpGet("{id}")]
         public string Get(int id)

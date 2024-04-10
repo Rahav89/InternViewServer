@@ -2,11 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
-    using System.Data.SqlClient;
     using System.Data;
-    using System.Text;
+    using System.Data.SqlClient;
 
     public class DBservices
     {
@@ -127,7 +124,7 @@
                     intern.First_name = dataReader["First_name"].ToString();
                     intern.Last_name = dataReader["Last_name"].ToString();
                     intern.Interns_year = dataReader["Interns_year"].ToString();
-                    intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);                  
+                    intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
 
                 }
 
@@ -184,7 +181,7 @@
                     Surgeries surgery = new Surgeries();//צריך לבצע המרות כי חוזר אובייקט
                     surgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
                     surgery.Case_number = Convert.ToInt32(dataReader["Case_number"]);
-                    surgery.Patient_age=Convert.ToInt32(dataReader["Patient_age"]);
+                    surgery.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
                     surgery.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
                     surgery.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
                     SurgeriesList.Add(surgery);
@@ -305,7 +302,7 @@
                     Procedure procedure = new Procedure();
                     procedure.procedure_Id = Convert.ToInt32(dataReader["procedure_Id"]);
                     procedure.procedureName = dataReader["procedureName"].ToString();
-                    procedure.category_Id =(dataReader["category_Id"]!=DBNull.Value)? Convert.ToInt32(dataReader["category_Id"]):0;
+                    procedure.category_Id = (dataReader["category_Id"] != DBNull.Value) ? Convert.ToInt32(dataReader["category_Id"]) : 0;
                     procedure.quantityAsMain = (dataReader["quantityAsMain"] != DBNull.Value) ? Convert.ToInt32(dataReader["quantityAsMain"]) : 0;//בדיקה אם הערך במסד הנתונים הוא ריק תשים במקומו אפס
                     procedure.quantityAsFirst = (dataReader["quantityAsFirst"] != DBNull.Value) ? Convert.ToInt32(dataReader["quantityAsFirst"]) : 0;//בדיקה אם הערך במסד הנתונים הוא ריק תשים במקומו אפס
                     procedure.quantityAsSecond = (dataReader["quantityAsSecond"] != DBNull.Value) ? Convert.ToInt32(dataReader["quantityAsSecond"]) : 0;//בדיקה אם הערך במסד הנתונים הוא ריק תשים במקומו אפס
@@ -414,7 +411,7 @@
             try
             {
                 SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
-                
+
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
@@ -422,7 +419,7 @@
                     //internInSurgery.id = Convert.ToInt32(dataReader["id"]);//המרות של טיפוסים 
                     internInSurgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);
                     internInSurgery.Intern_id = Convert.ToInt32(dataReader["Intern_id"]);
-                    internInSurgery.Intern_role= dataReader["Intern_role"].ToString();
+                    internInSurgery.Intern_role = dataReader["Intern_role"].ToString();
                     InternInSurgeryList.Add(internInSurgery);
                 }
                 return InternInSurgeryList;
@@ -501,7 +498,69 @@
         }
 
 
+        //--------------------------------------------------------------------------------------------------
+        // This method get 5 recent surgeries done by the intern, order by date
+        //--------------------------------------------------------------------------------------------------
 
+        public List<RecentSurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
+        {
+
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
+
+
+            cmd = CreateCommandWithStoredProcedure("SP_FiveRecentInternSurgeries", con, paramDic); // create the command
+
+
+            List<RecentSurgeriesOfIntern> FiveRecentInternSurgeriesList = new List<RecentSurgeriesOfIntern>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+
+                while (dataReader.Read())//מביאה רשומה רשומה 
+                {
+                    RecentSurgeriesOfIntern recentSurgeriesOfIntern = new RecentSurgeriesOfIntern();//צריך לבצע המרות כי חוזר אובייקט
+                    recentSurgeriesOfIntern.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
+                    recentSurgeriesOfIntern.procedureName = dataReader["procedureName"].ToString();
+                    recentSurgeriesOfIntern.Intern_role = dataReader["Intern_role"].ToString();
+                    recentSurgeriesOfIntern.Case_number = Convert.ToInt32(dataReader["Case_number"]);
+                    recentSurgeriesOfIntern.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
+                    recentSurgeriesOfIntern.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
+                    recentSurgeriesOfIntern.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
+                    FiveRecentInternSurgeriesList.Add(recentSurgeriesOfIntern);
+                }
+                return FiveRecentInternSurgeriesList;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
 
 
 
