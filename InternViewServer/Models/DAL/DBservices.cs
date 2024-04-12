@@ -502,7 +502,7 @@
         // This method get 5 recent surgeries done by the intern, order by date
         //--------------------------------------------------------------------------------------------------
 
-        public List<RecentSurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
+        public List<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
         {
 
             SqlConnection con;
@@ -525,7 +525,7 @@
             cmd = CreateCommandWithStoredProcedure("SP_FiveRecentInternSurgeries", con, paramDic); // create the command
 
 
-            List<RecentSurgeriesOfIntern> FiveRecentInternSurgeriesList = new List<RecentSurgeriesOfIntern>();
+            List<SurgeriesOfIntern> FiveRecentInternSurgeriesList = new List<SurgeriesOfIntern>();
 
             try
             {
@@ -533,7 +533,7 @@
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
-                    RecentSurgeriesOfIntern recentSurgeriesOfIntern = new RecentSurgeriesOfIntern();//צריך לבצע המרות כי חוזר אובייקט
+                    SurgeriesOfIntern recentSurgeriesOfIntern = new SurgeriesOfIntern();//צריך לבצע המרות כי חוזר אובייקט
                     recentSurgeriesOfIntern.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
                     recentSurgeriesOfIntern.procedureName = dataReader["procedureName"].ToString();
                     recentSurgeriesOfIntern.Intern_role = dataReader["Intern_role"].ToString();

@@ -35,7 +35,7 @@ namespace InternViewServer.Models
 
         }
 
-        static public List<RecentSurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
+        static public List<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
         {
             DBservices dbs = new DBservices();
             return dbs.FiveRecentInternSurgeries(internId);

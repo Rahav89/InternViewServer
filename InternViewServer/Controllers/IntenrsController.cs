@@ -20,7 +20,7 @@ namespace InternViewServer.Controllers
 
         [HttpGet]
         [Route("FiveRecentInternSurgeries")]
-        public IEnumerable<RecentSurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
+        public IEnumerable<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
         {
             return Models.Intern.FiveRecentInternSurgeries(internId);
         }

@@ -1,6 +1,8 @@
-﻿namespace InternViewServer.Models
+﻿using InternViewServer.Models.DAL;
+
+namespace InternViewServer.Models
 {
-    public class RecentSurgeriesOfIntern
+    public class SurgeriesOfIntern
     {
         public int Surgery_id { get; set; }
         public string procedureName { get; set; }
