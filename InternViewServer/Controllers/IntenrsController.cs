@@ -16,7 +16,12 @@ namespace InternViewServer.Controllers
             return Models.Intern.Read();
         }
 
-
+        [HttpGet]
+        [Route("AllInternSurgeries")]
+        public IEnumerable<SurgeriesOfIntern> AllInternSurgeries(int internId)
+        {
+            return Models.Intern.AllInternSurgeries(internId);
+        }
 
         [HttpGet]
         [Route("FiveRecentInternSurgeries")]
@@ -25,6 +30,12 @@ namespace InternViewServer.Controllers
             return Models.Intern.FiveRecentInternSurgeries(internId);
         }
 
+        [HttpGet]
+        [Route("GetSyllabusOfIntern")]
+        public IEnumerable<SyllabusOfIntern> GetSyllabusOfIntern(int internId)
+        {
+            return Models.Intern.GetSyllabusOfIntern(internId);
+        }
 
         // GET api/<Intenrs>/5
         [HttpGet("{id}")]

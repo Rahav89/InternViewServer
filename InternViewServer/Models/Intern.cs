@@ -34,12 +34,26 @@ namespace InternViewServer.Models
             throw new Exception("No such intern exists with these details");
 
         }
+      
+        static public List<SurgeriesOfIntern> AllInternSurgeries(int internId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.AllInternSurgeries(internId);
+        }
 
         static public List<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
         {
             DBservices dbs = new DBservices();
             return dbs.FiveRecentInternSurgeries(internId);
         }
+
+        static public List<SyllabusOfIntern> GetSyllabusOfIntern(int internId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetSyllabusOfIntern(internId);
+        }
+
+
 
     }
 }

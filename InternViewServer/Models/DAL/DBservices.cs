@@ -497,7 +497,69 @@
 
         }
 
+        //--------------------------------------------------------------------------------------------------
+        // This method get All teh surgeries done by the intern
+        //--------------------------------------------------------------------------------------------------
 
+        public List<SurgeriesOfIntern> AllInternSurgeries(int internId)
+        {
+
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
+
+
+            cmd = CreateCommandWithStoredProcedure("SP_SurgeriesByInternID", con, paramDic); // create the command
+
+
+            List<SurgeriesOfIntern> FiveRecentInternSurgeriesList = new List<SurgeriesOfIntern>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+
+                while (dataReader.Read())//מביאה רשומה רשומה 
+                {
+                    SurgeriesOfIntern recentSurgeriesOfIntern = new SurgeriesOfIntern();//צריך לבצע המרות כי חוזר אובייקט
+                    recentSurgeriesOfIntern.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
+                    recentSurgeriesOfIntern.procedureName = dataReader["procedureName"].ToString();
+                    recentSurgeriesOfIntern.Intern_role = dataReader["Intern_role"].ToString();
+                    recentSurgeriesOfIntern.Case_number = Convert.ToInt32(dataReader["Case_number"]);
+                    recentSurgeriesOfIntern.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
+                    recentSurgeriesOfIntern.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
+                    recentSurgeriesOfIntern.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
+                    FiveRecentInternSurgeriesList.Add(recentSurgeriesOfIntern);
+                }
+                return FiveRecentInternSurgeriesList;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
         //--------------------------------------------------------------------------------------------------
         // This method get 5 recent surgeries done by the intern, order by date
         //--------------------------------------------------------------------------------------------------
@@ -562,10 +624,66 @@
 
         }
 
+        //--------------------------------------------------------------------------------------------------
+        // This method the Syllabus of the intern
+        //--------------------------------------------------------------------------------------------------
+        public List<SyllabusOfIntern> GetSyllabusOfIntern(int internId)
+        {
+
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
 
 
+            cmd = CreateCommandWithStoredProcedure("SP_SyllabusOfIntern", con, paramDic); // create the command
 
 
+            List<SyllabusOfIntern> syllabusOfIntern = new List<SyllabusOfIntern>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+
+                while (dataReader.Read())//מביאה רשומה רשומה 
+                {
+                    SyllabusOfIntern rowOfSyllabusOfIntern = new SyllabusOfIntern();//צריך לבצע המרות כי חוזר אובייקט
+                    rowOfSyllabusOfIntern.procedureName = dataReader["procedureName"].ToString();
+                    rowOfSyllabusOfIntern.syllabus = Convert.ToInt32(dataReader["syllabus"]);
+                    rowOfSyllabusOfIntern.haveDone = Convert.ToInt32(dataReader["haveDone"]);
+                    rowOfSyllabusOfIntern.need = Convert.ToInt32(dataReader["need"]);
+                    syllabusOfIntern.Add(rowOfSyllabusOfIntern);
+                }
+                return syllabusOfIntern;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
+       
 
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
