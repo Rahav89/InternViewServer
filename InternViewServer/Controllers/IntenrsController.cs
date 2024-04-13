@@ -68,5 +68,15 @@ namespace InternViewServer.Controllers
         {
             return Models.Intern.LogIn(i.Id, i.Password_i);
         }
+
+
+
+        //PUT api/<UsersController>/5
+        //[HttpPut("{id}")]
+        //public bool Put(int id, [FromBody] Intern intern)
+        //{
+        //    intern.Id = id;
+        //    return (intern.UpdateIntern() == 1);
+        //}
     }
 }

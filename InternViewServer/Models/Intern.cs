@@ -53,6 +53,12 @@ namespace InternViewServer.Models
             return dbs.GetSyllabusOfIntern(internId);
         }
 
+        //Method to update intern details
+        //public int UpdateIntern()
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.UpdateIntern(this);
+        //}
 
 
     }

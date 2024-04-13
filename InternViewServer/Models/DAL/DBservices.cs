@@ -683,7 +683,55 @@
             }
 
         }
-       
+
+
+        ////--------------------------------------------------------------------------------------------------
+        ////This method update a user to the user table 
+        ////--------------------------------------------------------------------------------------------------
+        //public int UpdateIntern(Intern intern)
+        //{
+
+        //    SqlConnection con;
+        //    SqlCommand cmd;
+
+        //    try
+        //    {
+        //        con = connect("myProjDB"); // create the connection
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //write to log
+        //        throw (ex);
+        //    }
+
+        //    Dictionary<string, object> paramDic = new Dictionary<string, object>();
+        //    paramDic.Add("@Intern_id", intern.Id);
+        //    paramDic.Add("@Password_i", intern.Password_i);
+        //    paramDic.Add("@First_name", intern.First_name);
+        //    paramDic.Add("@Last_name", intern.Last_name);
+        //    paramDic.Add("@Interns_year", intern.Interns_year);
+        //    paramDic.Add("@Interns_rating", intern.Interns_rating);
+
+
+        //    cmd = CreateCommandWithStoredProcedure("SP_UpdateUser", con, paramDic); // create the command
+
+        //    try
+        //    {
+        //        int numEffected = cmd.ExecuteNonQuery(); // execute the command
+        //        return numEffected;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        if (con != null)
+        //        {
+        //            //close the db connection
+        //            con.Close();
+        //        }
+        //    }
+
+        //}
+
 
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
