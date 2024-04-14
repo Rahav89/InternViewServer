@@ -54,11 +54,11 @@ namespace InternViewServer.Models
         }
 
         //Method to update intern details
-        //public int UpdateIntern()
-        //{
-        //    DBservices dbs = new DBservices();
-        //    return dbs.UpdateIntern(this);
-        //}
+        public int UpdateIntern()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateIntern(this);
+        }
 
 
     }

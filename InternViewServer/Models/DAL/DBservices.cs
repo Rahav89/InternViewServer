@@ -688,49 +688,40 @@
         ////--------------------------------------------------------------------------------------------------
         ////This method update a user to the user table 
         ////--------------------------------------------------------------------------------------------------
-        //public int UpdateIntern(Intern intern)
-        //{
+        public int UpdateIntern(Intern intern)
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
 
-        //    SqlConnection con;
-        //    SqlCommand cmd;
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+                Dictionary<string, object> paramDic = new Dictionary<string, object>();
+                paramDic.Add("@Intern_id", intern.Id);
+                paramDic.Add("@Password_i", intern.Password_i);
+                paramDic.Add("@First_name", intern.First_name);
+                paramDic.Add("@Last_name", intern.Last_name);
+                paramDic.Add("@Interns_year", intern.Interns_year);
+                paramDic.Add("@Interns_rating", intern.Interns_rating);
 
-        //    try
-        //    {
-        //        con = connect("myProjDB"); // create the connection
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //write to log
-        //        throw (ex);
-        //    }
+                cmd = CreateCommandWithStoredProcedure("SP_UpdateUser", con, paramDic); // create the command
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                return numEffected; // return the number of records affected
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // Rethrow the exception after logging it
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed in the finally block
+                }
+            }
+        }
 
-        //    Dictionary<string, object> paramDic = new Dictionary<string, object>();
-        //    paramDic.Add("@Intern_id", intern.Id);
-        //    paramDic.Add("@Password_i", intern.Password_i);
-        //    paramDic.Add("@First_name", intern.First_name);
-        //    paramDic.Add("@Last_name", intern.Last_name);
-        //    paramDic.Add("@Interns_year", intern.Interns_year);
-        //    paramDic.Add("@Interns_rating", intern.Interns_rating);
-
-
-        //    cmd = CreateCommandWithStoredProcedure("SP_UpdateUser", con, paramDic); // create the command
-
-        //    try
-        //    {
-        //        int numEffected = cmd.ExecuteNonQuery(); // execute the command
-        //        return numEffected;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // write to log
-        //        if (con != null)
-        //        {
-        //            //close the db connection
-        //            con.Close();
-        //        }
-        //    }
-
-        //}
 
 
         //---------------------------------------------------------------------------------

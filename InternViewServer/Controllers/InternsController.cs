@@ -7,7 +7,7 @@ namespace InternViewServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IntenrsController : ControllerBase
+    public class InternsController : ControllerBase
     {
         // GET: api/<Intenrs>
         [HttpGet]
@@ -71,12 +71,12 @@ namespace InternViewServer.Controllers
 
 
 
-        //PUT api/<UsersController>/5
-        //[HttpPut("{id}")]
-        //public bool Put(int id, [FromBody] Intern intern)
-        //{
-        //    intern.Id = id;
-        //    return (intern.UpdateIntern() == 1);
-        //}
+        //Post api/<UsersController>/5
+        [HttpPost("updateIntern-{id}")]
+        public bool Post(int id, [FromBody] Intern intern)
+        {
+            intern.Id = id;
+            return (intern.UpdateIntern() == 1);
+        }
     }
 }
