@@ -61,6 +61,7 @@
                     intern.Last_name = dataReader["Last_name"].ToString();
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
+                    intern.isManager = Convert.ToInt32(dataReader["isManager"]);
                     InternList.Add(intern);
                 }
                 return InternList;
@@ -125,7 +126,7 @@
                     intern.Last_name = dataReader["Last_name"].ToString();
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
-
+                    intern.isManager = Convert.ToInt32(dataReader["isManager"]);
                 }
 
                 return intern;
@@ -703,6 +704,7 @@
                 paramDic.Add("@Last_name", intern.Last_name);
                 paramDic.Add("@Interns_year", intern.Interns_year);
                 paramDic.Add("@Interns_rating", intern.Interns_rating);
+                paramDic.Add("@isManager", intern.isManager);
 
                 cmd = CreateCommandWithStoredProcedure("SP_UpdateUser", con, paramDic); // create the command
                 int numEffected = cmd.ExecuteNonQuery(); // execute the command

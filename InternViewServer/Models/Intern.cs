@@ -14,6 +14,7 @@ namespace InternViewServer.Models
         public string Interns_year { get; set; }
 
         public int Interns_rating { get; set; }
+        public int isManager { get; set; }
 
 
         static public List<Intern> Read()
