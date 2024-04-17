@@ -38,10 +38,10 @@ namespace InternViewServer.Controllers
         }
 
         // GET api/<Intenrs>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetInternByID/{id}")]
+        public Intern GetInternByID(int id)
         {
-            return "value";
+            return Models.Intern.GetInternByID(id);
         }
 
         // POST api/<Intenrs>
@@ -51,9 +51,11 @@ namespace InternViewServer.Controllers
         }
 
         // PUT api/<Intenrs>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("updateIntern/{id}")]
+        public bool put(int id, [FromBody] Intern intern)
         {
+            intern.Id = id;
+            return (intern.UpdateIntern() == 1);
         }
 
         // DELETE api/<Intenrs>/5
@@ -70,13 +72,5 @@ namespace InternViewServer.Controllers
         }
 
 
-
-        //Post api/<UsersController>/5
-        [HttpPost("updateIntern-{id}")]
-        public bool Post(int id, [FromBody] Intern intern)
-        {
-            intern.Id = id;
-            return (intern.UpdateIntern() == 1);
-        }
     }
 }

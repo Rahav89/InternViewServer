@@ -14,13 +14,18 @@ namespace InternViewServer.Models
         public string Interns_year { get; set; }
 
         public int Interns_rating { get; set; }
-        public int isManager { get; set; }
+        public bool isManager { get; set; }
 
 
         static public List<Intern> Read()
         {
             DBservices dbs = new DBservices();
             return dbs.ReadIntern();
+        }
+        static public Intern GetInternByID(int internID)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetInternByID(internID);
         }
 
         static public Intern LogIn(int id, string password)

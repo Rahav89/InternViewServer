@@ -61,10 +61,74 @@
                     intern.Last_name = dataReader["Last_name"].ToString();
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
-                    intern.isManager = Convert.ToInt32(dataReader["isManager"]);
+                    intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
                     InternList.Add(intern);
                 }
                 return InternList;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
+        
+        //--------------------------------------------------------------------------------------------------
+        // get intern by his ID
+        //--------------------------------------------------------------------------------------------------
+        public Intern GetInternByID(int internID)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internID);
+
+            cmd = CreateCommandWithStoredProcedure("SP_getInternByID", con, paramDic); // create the command
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+
+                if (dataReader.HasRows == false)
+                {
+                    return null;
+                }
+
+                Intern intern = new Intern();
+
+                while (dataReader.Read())
+                {
+                    intern.Id = Convert.ToInt32(dataReader["Intern_id"]);//המרות של טיפוסים 
+                    intern.Password_i = dataReader["Password_i"].ToString();
+                    intern.First_name = dataReader["First_name"].ToString();
+                    intern.Last_name = dataReader["Last_name"].ToString();
+                    intern.Interns_year = dataReader["Interns_year"].ToString();
+                    intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
+                    intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
+                }
+
+                return intern;
             }
             catch (Exception ex)
             {
@@ -126,7 +190,7 @@
                     intern.Last_name = dataReader["Last_name"].ToString();
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
-                    intern.isManager = Convert.ToInt32(dataReader["isManager"]);
+                    intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
                 }
 
                 return intern;
@@ -145,7 +209,6 @@
                     con.Close();
                 }
             }
-
         }
 
         //--------------------------------
@@ -723,8 +786,6 @@
                 }
             }
         }
-
-
 
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
