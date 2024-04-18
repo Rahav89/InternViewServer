@@ -22,12 +22,14 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.ReadIntern();
         }
+
+        //לקבל את כל פרטי המתמחה לפי האידי שלו
         static public Intern GetInternByID(int internID)
         {
             DBservices dbs = new DBservices();
             return dbs.GetInternByID(internID);
         }
-
+        //פונקציה של התחברות לפי תעודת זהות וסיסמא
         static public Intern LogIn(int id, string password)
         {
             DBservices dbs = new DBservices();
@@ -40,19 +42,19 @@ namespace InternViewServer.Models
             throw new Exception("No such intern exists with these details");
 
         }
-      
+        //רשימה של כל הניתוחים של מתמחה
         static public List<SurgeriesOfIntern> AllInternSurgeries(int internId)
         {
             DBservices dbs = new DBservices();
             return dbs.AllInternSurgeries(internId);
         }
-
+        //רשימה של  חמשת הניתוחים של מתמחה
         static public List<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
         {
             DBservices dbs = new DBservices();
             return dbs.FiveRecentInternSurgeries(internId);
         }
-
+        //רשימה של הסילבוסשל מתמחה לפי האידי שלו
         static public List<SyllabusOfIntern> GetSyllabusOfIntern(int internId)
         {
             DBservices dbs = new DBservices();
