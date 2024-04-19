@@ -551,7 +551,9 @@
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
+                    
                     SyllabusOfIntern rowOfSyllabusOfIntern = new SyllabusOfIntern();//צריך לבצע המרות כי חוזר אובייקט
+                    rowOfSyllabusOfIntern.procedure_Id = Convert.ToInt32(dataReader["procedure_Id"]);
                     rowOfSyllabusOfIntern.procedureName = dataReader["procedureName"].ToString();
                     rowOfSyllabusOfIntern.syllabus = Convert.ToInt32(dataReader["syllabus"]);
                     rowOfSyllabusOfIntern.haveDone = Convert.ToInt32(dataReader["haveDone"]);
