@@ -54,7 +54,7 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.FiveRecentInternSurgeries(internId);
         }
-        //רשימה של הסילבוסשל מתמחה לפי האידי שלו
+        //רשימה של הסילבוס של מתמחה לפי האידי שלו
         static public List<SyllabusOfIntern> GetSyllabusOfIntern(int internId)
         {
             DBservices dbs = new DBservices();
@@ -62,12 +62,17 @@ namespace InternViewServer.Models
         }
 
         //Method to update intern details
-        public int UpdateIntern()
+         public int UpdateIntern()
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateIntern(this);
         }
 
+        static public List<InternProcedureCounter> InternProcedureSummary()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.InternProcedureSummary();
+        }
 
     }
 }

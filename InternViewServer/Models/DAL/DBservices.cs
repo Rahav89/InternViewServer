@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Data.Common;
     using System.Data.SqlClient;
 
     public class DBservices
@@ -82,7 +83,7 @@
             }
 
         }
-        
+
         //--------------------------------------------------------------------------------------------------
         // get intern by his ID
         //--------------------------------------------------------------------------------------------------
@@ -786,6 +787,64 @@
                 }
             }
         }
+        //----------------------------
+        //[SP_CountProceduresByIntern]
+        //----------------------------
+        public List<InternProcedureCounter> InternProcedureSummary()
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+           
+
+            cmd = CreateCommandWithStoredProcedure("SP_CountProceduresByIntern", con, paramDic); // create the command
+
+            List<InternProcedureCounter> summaries = new List<InternProcedureCounter>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+              
+                while (dataReader.Read())
+                {
+                    InternProcedureCounter summary = new InternProcedureCounter();
+                    summary.InternId = Convert.ToInt32(dataReader["Intern_id"]);
+                    summary.FirstName = Convert.ToString(dataReader["First_name"]);
+                    summary.LastName = Convert.ToString(dataReader["Last_name"]);
+                    summary.InternsRating = Convert.ToInt32(dataReader["Interns_rating"]);
+                    summary.InternsYear = Convert.ToString(dataReader["Interns_year"]);
+                    summary.ProcedureCount = Convert.ToInt32(dataReader["ProcedureCount"]);
+                    summary.OverallNeed = Convert.ToInt32(dataReader["overAllNeed"]);
+                }
+                return summaries;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
 
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
@@ -813,9 +872,11 @@
 
             return cmd;
         }
-
-
-
     }
-
 }
+
+
+
+    
+
+

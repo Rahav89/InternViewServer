@@ -37,6 +37,14 @@ namespace InternViewServer.Controllers
             return Models.Intern.GetSyllabusOfIntern(internId);
         }
 
+
+        [HttpGet]
+        [Route("GetInternProcedureCounter")]
+        public IEnumerable<InternProcedureCounter> GetInternProcedureCounter()
+        {
+            return Models.Intern.InternProcedureSummary();
+        }
+
         // GET api/<Intenrs>/5
         [HttpGet("GetInternByID/{id}")]
         public Intern GetInternByID(int id)
