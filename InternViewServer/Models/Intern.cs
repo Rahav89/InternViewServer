@@ -5,7 +5,6 @@ namespace InternViewServer.Models
     public class Intern
     {
         public int Id { get; set; }
-
         public string Password_i { get; set; }
         public string First_name { get; set; }
 
@@ -73,6 +72,10 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.InternProcedureSummary();
         }
-
+        static public List<DetailedSyllabusOfIntern> fullDetailedSyllabusOfIntern(int internId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.fullDetailedSyllabusOfIntern(internId);
+        }
     }
 }
