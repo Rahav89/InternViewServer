@@ -391,181 +391,9 @@
             }
         }
 
-        //--------------------------------
-        // This method Reads all Category
-        //--------------------------------
-        public List<Category> ReadCategory()
-        {
-            SqlConnection con;
-            SqlCommand cmd;
-
-            try
-            {
-                con = connect("myProjDB"); // create the connection
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-            cmd = CreateCommandWithStoredProcedure("SP_ReadAllCategory", con, null); // create the command
-
-            List<Category> CategoryList = new List<Category>();
-
-            try
-            {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // create the object that reads from SQL
-
-                if (!dataReader.HasRows)
-                {
-                    return null;  // return null if doesn't found
-                }
-
-                while (dataReader.Read()) // brings record by record
-                {
-                    Category category = new Category();
-                    category.Category_Id = Convert.ToInt32(dataReader["Category_Id"]);
-                    category.CategoryName = dataReader["CategoryName"].ToString();
-                    category.quantityAsFirst = (dataReader["quantityAsFirst"] != DBNull.Value) ? Convert.ToInt32(dataReader["quantityAsFirst"]) : 0;//בדיקה אם הערך במסד הנתונים הוא ריק תשים במקומו אפס
-                    category.quantityAsSecond = (dataReader["quantityAsSecond"] != DBNull.Value) ? Convert.ToInt32(dataReader["quantityAsSecond"]) : 0;//בדיקה אם הערך במסד הנתונים הוא ריק תשים במקומו אפס
-
-                    CategoryList.Add(category);
-                }
-                return CategoryList;
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-            finally
-            {
-                if (con != null)
-                {
-                    // close the db connection
-                    con.Close();
-                }
-            }
-        }
-        //--------------------------------
-        // This method Reads all Intern_in_surgery
-        //--------------------------------
-        public List<Intern_in_surgery> ReadIntern_in_surgery()
-        {
-
-            SqlConnection con;
-            SqlCommand cmd;
-
-            try
-            {
-                con = connect("myProjDB"); // create the connection
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-
-            cmd = CreateCommandWithStoredProcedure("SP_ReadAllIntern_in_surgery", con, null);// create the command
-
-
-            List<Intern_in_surgery> InternInSurgeryList = new List<Intern_in_surgery>();
-
-            try
-            {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
-
-
-                while (dataReader.Read())//מביאה רשומה רשומה 
-                {
-                    Intern_in_surgery internInSurgery = new Intern_in_surgery();//צריך לבצע המרות כי חוזר אובייקט
-                    //internInSurgery.id = Convert.ToInt32(dataReader["id"]);//המרות של טיפוסים 
-                    internInSurgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);
-                    internInSurgery.Intern_id = Convert.ToInt32(dataReader["Intern_id"]);
-                    internInSurgery.Intern_role = dataReader["Intern_role"].ToString();
-                    InternInSurgeryList.Add(internInSurgery);
-                }
-                return InternInSurgeryList;
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-            finally
-            {
-                if (con != null)
-                {
-                    // close the db connection
-                    con.Close();
-                }
-            }
-
-        }
-        //-------------------------------------------
-        // This method Reads all Procedure In Surgery
-        //-------------------------------------------
-        public List<ProcedureInSurgery> ReadProcedureInSurgery()
-        {
-
-            SqlConnection con;
-            SqlCommand cmd;
-
-            try
-            {
-                con = connect("myProjDB"); // create the connection
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-
-            cmd = CreateCommandWithStoredProcedure("SP_ReadProcedureInSurgery", con, null);// create the command
-
-
-            List<ProcedureInSurgery> ProcedureInSurgeryList = new List<ProcedureInSurgery>();
-
-            try
-            {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
-
-
-                while (dataReader.Read())//מביאה רשומה רשומה 
-                {
-                    ProcedureInSurgery procedureInSurgery = new ProcedureInSurgery();//צריך לבצע המרות כי חוזר אובייקט
-                    procedureInSurgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);
-                    procedureInSurgery.procedure_Id = Convert.ToInt32(dataReader["procedure_Id"]);
-
-                    ProcedureInSurgeryList.Add(procedureInSurgery);
-                }
-                return ProcedureInSurgeryList;
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-            finally
-            {
-                if (con != null)
-                {
-                    // close the db connection
-                    con.Close();
-                }
-            }
-
-        }
-
         //--------------------------------------------------------------------------------------------------
         // This method get All teh surgeries done by the intern
         //--------------------------------------------------------------------------------------------------
-
         public List<SurgeriesOfIntern> AllInternSurgeries(int internId)
         {
 
@@ -788,7 +616,7 @@
             }
         }
         //----------------------------
-        //[SP_CountProceduresByIntern]
+        //gets all the interns and their procedure count
         //----------------------------
         public List<InternProcedureCounter> InternProcedureSummary()
         {
@@ -826,6 +654,7 @@
                     summary.InternsYear = Convert.ToString(dataReader["Interns_year"]);
                     summary.ProcedureCount = Convert.ToInt32(dataReader["ProcedureCount"]);
                     summary.OverallNeed = Convert.ToInt32(dataReader["overAllNeed"]);
+                    summaries.Add(summary);
                 }
                 return summaries;
 
@@ -844,8 +673,68 @@
                 }
             }
         }
+        //----------------------------
+        //gets all intern's procedure count by main/first/secound
+        //----------------------------
+        public List<DetailedSyllabusOfIntern> fullDetailedSyllabusOfIntern(int internId)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
 
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
 
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            paramDic.Add("@Intern_id", internId);
+            cmd = CreateCommandWithStoredProcedure("SP_GetInternDetailedSyllabus", con, paramDic); // create the command
+
+            List<DetailedSyllabusOfIntern> summaries = new List<DetailedSyllabusOfIntern>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    DetailedSyllabusOfIntern summary = new DetailedSyllabusOfIntern();
+                    summary.procedureName = Convert.ToString(dataReader["procedureName"]);               
+                    summary.category_Id = Convert.ToInt32(dataReader["category_Id"]);
+                    summary.CategoryName = Convert.ToString(dataReader["CategoryName"]);
+                    summary.requiredAsMain = Convert.ToInt32(dataReader["requiredAsMain"]);
+                    summary.requiredAsFirst = Convert.ToInt32(dataReader["requiredAsFirst"]);
+                    summary.requiredAsSecond = Convert.ToInt32(dataReader["requiredAsSecond"]);
+                    summary.doneAsMain = Convert.ToInt32(dataReader["doneAsMain"]);
+                    summary.doneAsFirst = Convert.ToInt32(dataReader["doneAsFirst"]);
+                    summary.doneAsSecond = Convert.ToInt32(dataReader["doneAsSecond"]);
+                    summary.categoryRequiredFirst = Convert.ToInt32(dataReader["categoryRequiredFirst"]);
+                    summary.categoryRequiredSecond = Convert.ToInt32(dataReader["categoryRequiredSecond"]);
+                    summaries.Add(summary);
+                }
+                return summaries;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------
