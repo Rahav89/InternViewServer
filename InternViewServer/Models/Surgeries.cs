@@ -19,7 +19,6 @@ namespace InternViewServer.Models
             return dbs.ReadSurgeries();
         }
 
-
         static public List<Surgeries> GetSurgeriesByID(int surgeryID)
         {
             DBservices dbs = new DBservices();
