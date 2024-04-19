@@ -826,6 +826,7 @@
                     summary.InternsYear = Convert.ToString(dataReader["Interns_year"]);
                     summary.ProcedureCount = Convert.ToInt32(dataReader["ProcedureCount"]);
                     summary.OverallNeed = Convert.ToInt32(dataReader["overAllNeed"]);
+                    summaries.Add(summary);
                 }
                 return summaries;
 
