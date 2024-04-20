@@ -249,6 +249,7 @@
                     surgery.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
                     surgery.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
                     surgery.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
+                    surgery.Hospital_name = dataReader["Hospital_name"].ToString();
                     SurgeriesList.Add(surgery);
                 }
                 return SurgeriesList;

@@ -13,6 +13,7 @@ namespace InternViewServer.Models
         public DateTime Surgery_date { get; set; }
         public int Difficulty_level { get; set; }
 
+        public string Hospital_name { get; set; }
         static public List<Surgeries> Read()
         {
             DBservices dbs = new DBservices();
