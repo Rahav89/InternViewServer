@@ -1,5 +1,6 @@
 ﻿namespace InternViewServer.Models.DAL
 {
+    using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -738,6 +739,69 @@
                 }
             }
         }
+
+        //-----------------------------------
+        //Get Intern Surgeries By Procedure
+        //----------------------------------
+        public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internId, int procedureID)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@InternID", internId);
+            paramDic.Add("@ProcedureID", procedureID);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetInternSurgeriesByProcedure", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> internSBPList = new List<Dictionary<string, object>>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Dictionary<string, object> surgeryDetails = new Dictionary<string, object>
+                    {
+                        {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                        {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                        {"Hospital_name",Convert.ToString(dataReader["Hospital_name"])},
+                        {"Procedure_name", Convert.ToString(dataReader["procedureName"])}
+                    };
+
+                    internSBPList.Add(surgeryDetails);
+                }
+                return internSBPList;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+
+
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------
