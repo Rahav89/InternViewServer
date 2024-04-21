@@ -24,13 +24,7 @@ namespace InternViewServer.Controllers
             return Surgeries.GetSurgeriesByID(surgeryID);//return null if doesnt found
         }
 
-        [HttpGet]
-        [Route("GetInternSurgeriesByProcedure/{procedureID}/{internId}")]//Use Resource routing
-        public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internId, int procedureID)
-        {
-            return Surgeries.GetInternSurgeriesByProcedure(internId,procedureID);//return null if doesnt found
-        }
-
+    
 
 
 

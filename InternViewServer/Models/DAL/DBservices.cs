@@ -777,7 +777,8 @@
                         {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
                         {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
                         {"Hospital_name",Convert.ToString(dataReader["Hospital_name"])},
-                        {"Procedure_name", Convert.ToString(dataReader["procedureName"])}
+                        {"Procedure_name", Convert.ToString(dataReader["procedureName"])},
+                        {"Intern_role", Convert.ToString(dataReader["Intern_role"])}
                     };
 
                     internSBPList.Add(surgeryDetails);

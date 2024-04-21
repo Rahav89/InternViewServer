@@ -26,12 +26,7 @@ namespace InternViewServer.Models
             return dbs.GetSurgeriesByID(surgeryID);
         }
 
-        static public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internID, int procedureID)
-        {
-            DBservices dbs = new DBservices();
-            return dbs.GetInternSurgeriesByProcedure(internID,procedureID);
-        }
-
+       
 
 
     }

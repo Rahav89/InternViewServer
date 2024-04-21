@@ -85,6 +85,12 @@ namespace InternViewServer.Controllers
         {
             return Models.Intern.LogIn(i.Id, i.Password_i);
         }
+        [HttpGet]
+        [Route("GetInternSurgeriesByProcedure/{procedureID}/{internId}")]//Use Resource routing
+        public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internId, int procedureID)
+        {
+            return Intern.GetInternSurgeriesByProcedure(internId, procedureID);
+        }
 
 
     }

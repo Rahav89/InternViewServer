@@ -77,5 +77,13 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.fullDetailedSyllabusOfIntern(internId);
         }
+
+
+        static public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internID, int procedureID)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetInternSurgeriesByProcedure(internID, procedureID);
+        }
+
     }
 }
