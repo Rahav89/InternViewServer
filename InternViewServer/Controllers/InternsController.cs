@@ -59,6 +59,15 @@ namespace InternViewServer.Controllers
             return Models.Intern.GetInternByID(id);
         }
 
+
+        // GET api/<Intenrs>/5
+        [HttpGet("checkEmailIntern/{email}")]
+        public int checkEmailIntern(string email)
+        {
+            return Models.Intern.checkEmailIntern(email);
+        }
+
+
         // POST api/<Intenrs>
         [HttpPost]
         public void Post([FromBody] string value)
@@ -85,6 +94,8 @@ namespace InternViewServer.Controllers
         {
             return Models.Intern.LogIn(i.Id, i.Password_i);
         }
+
+
         [HttpGet]
         [Route("GetInternSurgeriesByProcedure/{procedureID}/{internId}")]//Use Resource routing
         public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internId, int procedureID)

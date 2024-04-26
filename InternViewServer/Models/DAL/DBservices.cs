@@ -64,6 +64,7 @@
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
                     intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
+                    intern.Email_I = dataReader["Email_I"].ToString();
                     InternList.Add(intern);
                 }
                 return InternList;
@@ -128,6 +129,7 @@
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
                     intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
+                    intern.Email_I = dataReader["Email_I"].ToString();
                 }
 
                 return intern;
@@ -148,9 +150,53 @@
             }
 
         }
-
         //--------------------------------------------------------------------------------------------------
-        // Log in Intern
+        // check Email Intern
+        //--------------------------------------------------------------------------------------------------
+        public int checkEmailIntern(string email)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Email_intern", email);
+
+            cmd = CreateCommandWithStoredProcedure("SP_checkEmailIntern", con, paramDic); // create the command
+            var returnParameter = cmd.Parameters.Add("Exists", SqlDbType.Int);
+            returnParameter.Direction = ParameterDirection.ReturnValue;
+            try
+            {
+                cmd.ExecuteNonQuery(); // execute the command
+            }
+            catch (Exception ex)
+            { 
+                // write to log
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+            return (int)returnParameter.Value;
+        }
+
+        //--------------------------------------------------------------------------------------------------                                                              
+        // Log in Intern                                                         
         //--------------------------------------------------------------------------------------------------
         public Intern LogInInternByIDPass(int id, string password)
         {
@@ -193,6 +239,7 @@
                     intern.Interns_year = dataReader["Interns_year"].ToString();
                     intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
                     intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
+                    intern.Email_I = dataReader["Email_I"].ToString();
                 }
 
                 return intern;
@@ -553,7 +600,7 @@
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
-                    
+
                     SyllabusOfIntern rowOfSyllabusOfIntern = new SyllabusOfIntern();//צריך לבצע המרות כי חוזר אובייקט
                     rowOfSyllabusOfIntern.procedure_Id = Convert.ToInt32(dataReader["procedure_Id"]);
                     rowOfSyllabusOfIntern.procedureName = dataReader["procedureName"].ToString();
@@ -601,6 +648,7 @@
                 paramDic.Add("@Interns_year", intern.Interns_year);
                 paramDic.Add("@Interns_rating", intern.Interns_rating);
                 paramDic.Add("@isManager", intern.isManager);
+                paramDic.Add("@Email_I", intern.Email_I);
 
                 cmd = CreateCommandWithStoredProcedure("SP_UpdateUser", con, paramDic); // create the command
                 int numEffected = cmd.ExecuteNonQuery(); // execute the command
@@ -638,7 +686,7 @@
             }
 
             Dictionary<string, object> paramDic = new Dictionary<string, object>();
-           
+
 
             cmd = CreateCommandWithStoredProcedure("SP_CountProceduresByIntern", con, paramDic); // create the command
 
@@ -647,7 +695,7 @@
             try
             {
                 SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
-              
+
                 while (dataReader.Read())
                 {
                     InternProcedureCounter summary = new InternProcedureCounter();
@@ -709,7 +757,7 @@
                 while (dataReader.Read())
                 {
                     DetailedSyllabusOfIntern summary = new DetailedSyllabusOfIntern();
-                    summary.procedureName = Convert.ToString(dataReader["procedureName"]);               
+                    summary.procedureName = Convert.ToString(dataReader["procedureName"]);
                     summary.category_Id = Convert.ToInt32(dataReader["category_Id"]);
                     summary.CategoryName = Convert.ToString(dataReader["CategoryName"]);
                     summary.requiredAsMain = Convert.ToInt32(dataReader["requiredAsMain"]);
@@ -834,6 +882,6 @@
 
 
 
-    
+
 
 

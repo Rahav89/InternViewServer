@@ -15,6 +15,8 @@ namespace InternViewServer.Models
         public int Interns_rating { get; set; }
         public bool isManager { get; set; }
 
+        public string Email_I {  get; set; }
+
 
         static public List<Intern> Read()
         {
@@ -83,6 +85,12 @@ namespace InternViewServer.Models
         {
             DBservices dbs = new DBservices();
             return dbs.GetInternSurgeriesByProcedure(internID, procedureID);
+        }
+
+        static public int checkEmailIntern(string email)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.checkEmailIntern(email);
         }
 
     }
