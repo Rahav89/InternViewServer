@@ -849,8 +849,230 @@
             }
         }
 
+        //-----------------------------------
+        //Get all the interns exept from the one given - the ones he can talk to
+        //----------------------------------
+        public List<Dictionary<string, object>> GetInternsForChat(int internId)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
 
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
 
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetInternsForChat", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> interns = new List<Dictionary<string, object>>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Dictionary<string, object> intern = new Dictionary<string, object>
+                    {
+                        {"Intern_id", Convert.ToInt32(dataReader["Intern_id"])},
+                        {"First_name",Convert.ToString(dataReader["First_name"])},
+                        {"Last_name", Convert.ToString(dataReader["Last_name"])},
+                    };
+
+                    interns.Add(intern);
+                }
+                return interns;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+        //-----------------------------------
+        // Get the last messages the intern has to each one of the other interns
+        //----------------------------------
+        public List<Dictionary<string, object>> GetLastMessagesForIntern(int internId)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetLastMessagesForIntern", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> messages = new List<Dictionary<string, object>>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Dictionary<string, object> message = new Dictionary<string, object>
+                    {
+                        {"messages_id", Convert.ToInt32(dataReader["messages_id"])},
+                        {"from_id", Convert.ToInt32(dataReader["from_id"])},
+                        {"to_id", Convert.ToInt32(dataReader["to_id"])},
+                        {"content",Convert.ToString(dataReader["content"])},
+                        {"partner_id", Convert.ToString(dataReader["partner_id"])},
+                    };
+
+                    messages.Add(message);
+                }
+                return messages;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+        //-----------------------------------
+        // Get all the messages the intern has with the other intern
+        //----------------------------------
+        public List<Message> GetChatWithPartner(int internId, int intern_Partner_id)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
+            paramDic.Add("@Intern_Partner_id", intern_Partner_id);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetChatWithPartner", con, paramDic); // create the command
+
+            List<Message> messages = new List<Message> ();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Message message = new Message();
+                    message.messages_id = Convert.ToInt32(dataReader["messages_id"]);
+                    message.from_id = Convert.ToInt32(dataReader["from_id"]);
+                    message.to_id = Convert.ToInt32(dataReader["to_id"]);
+                    message.content = Convert.ToString(dataReader["content"]);
+                    message.messages_date = Convert.ToDateTime(dataReader["messages_date"]);
+                    messages.Add(message);
+
+                }
+                return messages;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+        //-------------------------------------------
+        /// insert new Message
+        //------------------------------------------
+        public int AddNewMessage(Message m)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            paramDic.Add("@from_id", m.from_id);
+            paramDic.Add("@to_id", m.to_id);
+            paramDic.Add("@content", m.content);
+            paramDic.Add("@messages_date", m.messages_date);
+
+            cmd = CreateCommandWithStoredProcedure("SP_InsertNewMessage", con, paramDic);   // create the command
+            try
+            {
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command              
+                return numEffected; // return the number of records affected
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------
