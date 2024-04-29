@@ -81,6 +81,12 @@ namespace InternViewServer.Controllers
             intern.Id = id;
             return (intern.UpdateIntern() == 1);
         }
+        // PUT api/<Intenrs>/5
+        [HttpPut("UpdateInternPassword/{email}/{password}")]
+        public bool UpdateInternPassword(string email, string password)
+        {
+            return (Intern.UpdateInternPassword(email,password) == 1);
+        }
 
         // DELETE api/<Intenrs>/5
         [HttpDelete("{id}")]

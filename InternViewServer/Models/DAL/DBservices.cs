@@ -180,7 +180,7 @@
                 cmd.ExecuteNonQuery(); // execute the command
             }
             catch (Exception ex)
-            { 
+            {
                 // write to log
                 throw (ex);
             }
@@ -667,6 +667,39 @@
                 }
             }
         }
+
+        //----------------------------
+        //sets new password for intern by email
+        //----------------------------
+        public int UpdateInternPassword(string email, string password)
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+                Dictionary<string, object> paramDic = new Dictionary<string, object>();
+                paramDic.Add("@email", email);
+                paramDic.Add("@newPass", password);
+
+                cmd = CreateCommandWithStoredProcedure("SP_newPassIntern", con, paramDic); // create the command
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                return numEffected; // return the number of records affected
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // Rethrow the exception after logging it
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed in the finally block
+                }
+            }
+        }
         //----------------------------
         //gets all the interns and their procedure count
         //----------------------------
@@ -991,7 +1024,7 @@
 
             cmd = CreateCommandWithStoredProcedure("SP_GetChatWithPartner", con, paramDic); // create the command
 
-            List<Message> messages = new List<Message> ();
+            List<Message> messages = new List<Message>();
 
             try
             {
@@ -1073,6 +1106,9 @@
             }
 
         }
+
+
+
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------

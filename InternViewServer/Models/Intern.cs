@@ -15,7 +15,7 @@ namespace InternViewServer.Models
         public int Interns_rating { get; set; }
         public bool isManager { get; set; }
 
-        public string Email_I {  get; set; }
+        public string Email_I { get; set; }
 
 
         static public List<Intern> Read()
@@ -63,10 +63,16 @@ namespace InternViewServer.Models
         }
 
         //Method to update intern details
-         public int UpdateIntern()
+        public int UpdateIntern()
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateIntern(this);
+        }
+        //Set intern password by email
+        public static int UpdateInternPassword(string email, string password)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateInternPassword(email, password);
         }
 
         static public List<InternProcedureCounter> InternProcedureSummary()
@@ -92,6 +98,7 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.checkEmailIntern(email);
         }
+
 
     }
 }
