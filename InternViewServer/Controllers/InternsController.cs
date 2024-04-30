@@ -109,6 +109,13 @@ namespace InternViewServer.Controllers
             return Intern.GetInternSurgeriesByProcedure(internId, procedureID);
         }
 
+        // GET: api/<Messages>
+        [HttpGet]
+        [Route("GetInternsForChat")]
+        public List<Dictionary<string, object>> GetInternsForChat(int id)
+        {
+            return Intern.GetInternsForChat(id);
+        }
 
     }
 }

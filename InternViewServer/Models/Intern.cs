@@ -99,6 +99,10 @@ namespace InternViewServer.Models
             return dbs.checkEmailIntern(email);
         }
 
-
+        static public List<Dictionary<string, object>> GetInternsForChat(int internId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetInternsForChat(internId);
+        }
     }
 }
