@@ -439,7 +439,55 @@
                 }
             }
         }
+        //--------------------------------
+        // This method Get all Procedure name
+        //--------------------------------
+        public List<Procedure> GetAllprocedureName( )
+        {
+            SqlConnection con;
+            SqlCommand cmd;
 
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetProcedureNames", con, null); // create the command
+           
+            List<Procedure> ProcedureList = new List<Procedure>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // create the object that reads from SQL
+
+                while (dataReader.Read()) // brings record by record
+                {
+                    Procedure procedure = new Procedure();
+                    procedure.procedureName = dataReader["procedureName"].ToString();
+
+                    ProcedureList.Add(procedure);
+                }
+                return ProcedureList;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
         //--------------------------------------------------------------------------------------------------
         // This method get All teh surgeries done by the intern
         //--------------------------------------------------------------------------------------------------

@@ -17,6 +17,11 @@ namespace InternViewServer.Models
             return dbs.ReadProcedure();
         }
 
+        static public List<Procedure> GetAllprocedureName ()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetAllprocedureName();
+        }
 
     }
 }
