@@ -988,6 +988,78 @@
             }
         }
 
+        //-----------------------------------
+        //Get Future Surgeries
+        //-----------------------------------
+        public List<Dictionary<string, object>> GetFutureSurgeries()
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // Rethrow the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            cmd = CreateCommandWithStoredProcedure("SP_FutureSurgeries", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+            int? lastSurgeryId = null;  // To track the last processed surgery ID
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+                while (dataReader.Read())
+                {
+                    int currentSurgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+
+                    // Check if this row's surgery ID matches the last processed one
+                    if (!lastSurgeryId.HasValue || lastSurgeryId.Value != currentSurgeryId)
+                    {
+                        // New surgery entry
+                        Dictionary<string, object> surgery = new Dictionary<string, object>
+                {
+                    {"Surgery_id", currentSurgeryId},
+                    {"procedureName", Convert.ToString(dataReader["procedureName"])},
+                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+                    {"Case_number", Convert.ToInt32(dataReader["Case_number"])},
+                    {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])}
+                };
+                        surgeries.Add(surgery);
+                        lastSurgeryId = currentSurgeryId; // Update the last surgery ID
+                    }
+                    else
+                    {
+                        // Append the procedure name to the last entry
+                        surgeries[surgeries.Count - 1]["procedureName"] += ", " + Convert.ToString(dataReader["procedureName"]);
+                    }
+                }
+                return surgeries;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // Rethrow the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed
+                }
+            }
+        }
+
+
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------
