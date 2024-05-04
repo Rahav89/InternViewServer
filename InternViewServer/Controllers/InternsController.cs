@@ -109,6 +109,16 @@ namespace InternViewServer.Controllers
             return Intern.GetInternSurgeriesByProcedure(internId, procedureID);
         }
 
+        [HttpGet]
+        [Route("GetInternSurgeriesByProcedureName/{procedureName}/{InternID}")]//Use Resource routing
+        public List<Dictionary<string, object>> GetInternSurgeriesByProcedureName(int InternID, string procedureName)
+        {
+            return Intern.GetInternSurgeriesByProcedureName(InternID, procedureName);
+        }
+
+
+
+
         // GET: api/<Messages>
         [HttpGet]
         [Route("GetInternsForChat")]

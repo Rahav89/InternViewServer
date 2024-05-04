@@ -442,7 +442,7 @@
         //--------------------------------
         // This method Get all Procedure name
         //--------------------------------
-        public List<Procedure> GetAllprocedureName( )
+        public List<Procedure> GetAllprocedureName()
         {
             SqlConnection con;
             SqlCommand cmd;
@@ -458,7 +458,7 @@
             }
 
             cmd = CreateCommandWithStoredProcedure("SP_GetProcedureNames", con, null); // create the command
-           
+
             List<Procedure> ProcedureList = new List<Procedure>();
 
             try
@@ -929,6 +929,68 @@
                 }
             }
         }
+
+        //-----------------------------------
+        //Get Intern Surgeries By Procedure name
+        //----------------------------------
+        public List<Dictionary<string, object>> GetInternSurgeriesByProcedureName(int internID, string procedureName)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@InternID", internID);
+            paramDic.Add("@ProcedureName", procedureName);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetInternSurgeriesByProcedureName", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> internSBPList = new List<Dictionary<string, object>>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Dictionary<string, object> surgeryDetails = new Dictionary<string, object>
+            {
+                {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                {"Hospital_name",Convert.ToString(dataReader["Hospital_name"])},
+                {"Procedure_name", Convert.ToString(dataReader["procedureName"])},
+                {"Intern_role", Convert.ToString(dataReader["Intern_role"])}
+            };
+
+                    internSBPList.Add(surgeryDetails);
+                }
+                return internSBPList;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
 
         //-----------------------------------
         //Get all the interns exept from the one given - the ones he can talk to

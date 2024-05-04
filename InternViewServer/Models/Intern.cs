@@ -86,12 +86,22 @@ namespace InternViewServer.Models
             return dbs.fullDetailedSyllabusOfIntern(internId);
         }
 
+        //מחזיר את הפרטי ניתוח לפי תעודת זהות ושם פרוצדורה
+        static public List<Dictionary<string, object>>GetInternSurgeriesByProcedureName(int internID, string procedureName)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetInternSurgeriesByProcedureName(internID,procedureName);
+        }
+
 
         static public List<Dictionary<string, object>> GetInternSurgeriesByProcedure(int internID, int procedureID)
         {
             DBservices dbs = new DBservices();
             return dbs.GetInternSurgeriesByProcedure(internID, procedureID);
         }
+
+
+
 
         static public int checkEmailIntern(string email)
         {
