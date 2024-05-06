@@ -18,7 +18,7 @@ namespace InternViewServer.Controllers
 
         [HttpGet]
         [Route("AllInternSurgeries")]
-        public IEnumerable<SurgeriesOfIntern> AllInternSurgeries(int internId)
+        public List<Dictionary<string, object>> AllInternSurgeries(int internId)
         {
             return Models.Intern.AllInternSurgeries(internId);
         }

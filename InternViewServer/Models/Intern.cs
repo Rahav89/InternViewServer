@@ -44,7 +44,7 @@ namespace InternViewServer.Models
 
         }
         //רשימה של כל הניתוחים של מתמחה
-        static public List<SurgeriesOfIntern> AllInternSurgeries(int internId)
+        static public List<Dictionary<string, object>> AllInternSurgeries(int internId)
         {
             DBservices dbs = new DBservices();
             return dbs.AllInternSurgeries(internId);

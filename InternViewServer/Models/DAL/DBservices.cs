@@ -491,65 +491,77 @@
         //--------------------------------------------------------------------------------------------------
         // This method get All teh surgeries done by the intern
         //--------------------------------------------------------------------------------------------------
-        public List<SurgeriesOfIntern> AllInternSurgeries(int internId)
+        public List<Dictionary<string, object>> AllInternSurgeries(int internId)
         {
-
-            SqlConnection con;
+            SqlConnection con = null;
             SqlCommand cmd;
 
             try
             {
-                con = connect("myProjDB"); // create the connection
+                con = connect("myProjDB");  // Create the connection
             }
             catch (Exception ex)
             {
-                // write to log
-                throw (ex);
+                // Write to log
+                throw ex; // Rethrow the original exception or log it properly
             }
 
             Dictionary<string, object> paramDic = new Dictionary<string, object>();
             paramDic.Add("@Intern_id", internId);
 
+            cmd = CreateCommandWithStoredProcedure("SP_SurgeriesByInternID", con, paramDic); // Create the command
 
-            cmd = CreateCommandWithStoredProcedure("SP_SurgeriesByInternID", con, paramDic); // create the command
-
-
-            List<SurgeriesOfIntern> FiveRecentInternSurgeriesList = new List<SurgeriesOfIntern>();
+            List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+            int? lastSurgeryId = null;  // To track the last processed surgery ID
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
-
-                while (dataReader.Read())//מביאה רשומה רשומה 
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+                while (dataReader.Read())
                 {
-                    SurgeriesOfIntern recentSurgeriesOfIntern = new SurgeriesOfIntern();//צריך לבצע המרות כי חוזר אובייקט
-                    recentSurgeriesOfIntern.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
-                    recentSurgeriesOfIntern.procedureName = dataReader["procedureName"].ToString();
-                    recentSurgeriesOfIntern.Intern_role = dataReader["Intern_role"].ToString();
-                    recentSurgeriesOfIntern.Case_number = Convert.ToInt32(dataReader["Case_number"]);
-                    recentSurgeriesOfIntern.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
-                    recentSurgeriesOfIntern.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
-                    recentSurgeriesOfIntern.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
-                    FiveRecentInternSurgeriesList.Add(recentSurgeriesOfIntern);
+                    int currentSurgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+
+                    // Check if this row's surgery ID matches the last processed one
+                    if (!lastSurgeryId.HasValue || lastSurgeryId.Value != currentSurgeryId)
+                    {
+                        // New surgery entry
+                        Dictionary<string, object> surgery = new Dictionary<string, object>
+                {
+                    {"Surgery_id", currentSurgeryId},
+                    {"procedureName", new List<string> {Convert.ToString(dataReader["procedureName"])}},
+                    {"Intern_role", Convert.ToString(dataReader["Intern_role"])},
+                    {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
+                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                    {"newMatch", Convert.ToInt32(dataReader["newMatch"])}
+                };
+                        surgeries.Add(surgery);
+                        lastSurgeryId = currentSurgeryId; // Update the last surgery ID
+                    }
+                    else
+                    {
+                        // Append the procedure name to the last entry's procedureName list
+                        List<string> procedures = surgeries.Last()["procedureName"] as List<string>;
+                        procedures.Add(Convert.ToString(dataReader["procedureName"]));
+                    }
                 }
-                return FiveRecentInternSurgeriesList;
+                return surgeries;
             }
             catch (Exception ex)
             {
-                // write to log
-                throw (ex);
+                // Write to log
+                throw ex; // Rethrow the original exception or log it properly
             }
-
             finally
             {
                 if (con != null)
                 {
-                    // close the db connection
-                    con.Close();
+                    con.Close(); // Ensure the connection is closed
                 }
             }
-
         }
+
         //--------------------------------------------------------------------------------------------------
         // This method get 5 recent surgeries done by the intern, order by date
         //--------------------------------------------------------------------------------------------------
