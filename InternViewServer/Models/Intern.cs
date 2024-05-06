@@ -49,6 +49,16 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.AllInternSurgeries(internId);
         }
+
+        //רשימה של כל הניתוחים של מתמחה
+
+        static public bool UpdateInternInSurgery(SurgeryMatch match)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateInternInSurgery(match);
+
+        }
+
         //רשימה של  חמשת הניתוחים של מתמחה
         static public List<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
         {
@@ -99,9 +109,6 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.GetInternSurgeriesByProcedure(internID, procedureID);
         }
-
-
-
 
         static public int checkEmailIntern(string email)
         {

@@ -562,6 +562,114 @@
             }
         }
 
+        ////--------------------------------------------------------------------------------------------------
+        ////UpdateInternInSurgery
+        ////--------------------------------------------------------------------------------------------------
+        public bool UpdateInternInSurgery(SurgeryMatch match)
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Write to log
+                throw ex; // Rethrow the original exception or log it properly
+            }
+           
+                Dictionary<string, object> paramDic = new Dictionary<string, object>();
+                paramDic.Add("@Surgery_id", match.Surgery_id);
+                paramDic.Add("@Intern_id", match.Intern_id);
+                paramDic.Add("@Intern_role", match.Intern_role);
+                paramDic.Add("@newMatch", match.newMatch);
+
+                cmd = CreateCommandWithStoredProcedure("SP_UpdateInternInSurgery", con, paramDic); // create the command
+                var returnParameter = cmd.Parameters.Add("@Result", SqlDbType.Int);//- ערך חוזר
+                returnParameter.Direction = ParameterDirection.ReturnValue;
+                
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+            return Convert.ToInt32(returnParameter.Value) == 1;
+        }
+
+        ////--------------------------------------------------------------------------------------------------
+        ////UpdateInternInSurgery
+        ////--------------------------------------------------------------------------------------------------
+        public List<Dictionary<string, object>> GetSurgeryRoles(int surgery_id)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@surgery_id", surgery_id);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetSurgeryRoles", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Dictionary<string, object> surgery = new Dictionary<string, object>
+                    {
+                        {"Intern_role", Convert.ToString(dataReader["Intern_role"])},
+                        {"First_name",Convert.ToString(dataReader["First_name"])},
+                        {"Last_name", Convert.ToString(dataReader["Last_name"])},
+                    };
+
+                    surgeries.Add(surgery);
+                }
+                return surgeries;
+
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+
         //--------------------------------------------------------------------------------------------------
         // This method get 5 recent surgeries done by the intern, order by date
         //--------------------------------------------------------------------------------------------------

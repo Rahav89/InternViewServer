@@ -32,5 +32,12 @@ namespace InternViewServer.Models
             return dbs.GetFutureSurgeries();
         }
 
+        static public List<Dictionary<string, object>> GetSurgeryRoles(int surgery_id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetSurgeryRoles(surgery_id);
+        }
+
+
     }
 }

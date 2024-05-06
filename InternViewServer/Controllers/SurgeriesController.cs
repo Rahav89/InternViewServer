@@ -31,6 +31,13 @@ namespace InternViewServer.Controllers
             return Surgeries.GetFutureSurgeries();
         }
 
+        [HttpGet]
+        [Route("GetSurgeryRoles")]//Use Resource routing
+        public List<Dictionary<string, object>> GetSurgeryRoles(int surgery_id)
+        {
+            return Surgeries.GetSurgeryRoles(surgery_id);
+        }
+
         // GET api/<SurgeriesController>/5
         [HttpGet("{id}")]
         public string Get(int id)

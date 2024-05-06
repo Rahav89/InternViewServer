@@ -23,6 +23,13 @@ namespace InternViewServer.Controllers
             return Models.Intern.AllInternSurgeries(internId);
         }
 
+        [HttpPut]
+        [Route("UpdateInternInSurgery")]
+        public bool UpdateInternInSurgery(SurgeryMatch match)
+        {
+            return Models.Intern.UpdateInternInSurgery(match);
+        }
+
         [HttpGet]
         [Route("FiveRecentInternSurgeries")]
         public IEnumerable<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
