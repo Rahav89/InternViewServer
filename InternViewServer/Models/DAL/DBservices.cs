@@ -958,6 +958,7 @@
                 while (dataReader.Read())
                 {
                     DetailedSyllabusOfIntern summary = new DetailedSyllabusOfIntern();
+                    summary.procedure_Id = Convert.ToInt32(dataReader["procedure_Id"]);
                     summary.procedureName = Convert.ToString(dataReader["procedureName"]);
                     summary.category_Id = Convert.ToInt32(dataReader["category_Id"]);
                     summary.CategoryName = Convert.ToString(dataReader["CategoryName"]);
