@@ -489,7 +489,7 @@
             }
         }
         //--------------------------------------------------------------------------------------------------
-        // This method get All teh surgeries done by the intern
+        // This method get All the surgeries done by the intern - for calander
         //--------------------------------------------------------------------------------------------------
         public List<Dictionary<string, object>> AllInternSurgeries(int internId)
         {
@@ -526,16 +526,15 @@
                     {
                         // New surgery entry
                         Dictionary<string, object> surgery = new Dictionary<string, object>
-                {
-                    {"Surgery_id", currentSurgeryId},
-                    {"procedureName", new List<string> {Convert.ToString(dataReader["procedureName"])}},
-                    {"Intern_role", Convert.ToString(dataReader["Intern_role"])},
-                    {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
-                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
-                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
-                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
-                    {"newMatch", Convert.ToInt32(dataReader["newMatch"])}
-                };
+                        {
+                            {"Surgery_id", currentSurgeryId},
+                            {"procedureName", new List<string> {Convert.ToString(dataReader["procedureName"])}},
+                            {"Intern_role", Convert.ToString(dataReader["Intern_role"])},
+                            {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
+                            {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+                            {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                            {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])}
+                        };
                         surgeries.Add(surgery);
                         lastSurgeryId = currentSurgeryId; // Update the last surgery ID
                     }
@@ -563,56 +562,56 @@
         }
 
         ////--------------------------------------------------------------------------------------------------
-        ////UpdateInternInSurgery
+        ////UpdateInternInSurgery - -FOR THE OLD ALGO
         ////--------------------------------------------------------------------------------------------------
-        public bool UpdateInternInSurgery(SurgeryMatch match)
-        {
-            SqlConnection con = null;
-            SqlCommand cmd;
+        //public bool UpdateInternInSurgery(SurgeryMatch match)
+        //{
+        //    SqlConnection con = null;
+        //    SqlCommand cmd;
 
-            try
-            {
-                con = connect("myProjDB");  // Create the connection
-            }
-            catch (Exception ex)
-            {
-                // Write to log
-                throw ex; // Rethrow the original exception or log it properly
-            }
-           
-                Dictionary<string, object> paramDic = new Dictionary<string, object>();
-                paramDic.Add("@Surgery_id", match.Surgery_id);
-                paramDic.Add("@Intern_id", match.Intern_id);
-                paramDic.Add("@Intern_role", match.Intern_role);
-                paramDic.Add("@newMatch", match.newMatch);
+        //    try
+        //    {
+        //        con = connect("myProjDB");  // Create the connection
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Write to log
+        //        throw ex; // Rethrow the original exception or log it properly
+        //    }
 
-                cmd = CreateCommandWithStoredProcedure("SP_UpdateInternInSurgery", con, paramDic); // create the command
-                var returnParameter = cmd.Parameters.Add("@Result", SqlDbType.Int);//- ערך חוזר
-                returnParameter.Direction = ParameterDirection.ReturnValue;
-                
-            try
-            {
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
+        //        Dictionary<string, object> paramDic = new Dictionary<string, object>();
+        //        paramDic.Add("@Surgery_id", match.Surgery_id);
+        //        paramDic.Add("@Intern_id", match.Intern_id);
+        //        paramDic.Add("@Intern_role", match.Intern_role);
+        //        paramDic.Add("@newMatch", match.newMatch);
 
-            finally
-            {
-                if (con != null)
-                {
-                    // close the db connection
-                    con.Close();
-                }
-            }
-            return Convert.ToInt32(returnParameter.Value) == 1;
-        }
+        //        cmd = CreateCommandWithStoredProcedure("SP_UpdateInternInSurgery", con, paramDic); // create the command
+        //        var returnParameter = cmd.Parameters.Add("@Result", SqlDbType.Int);//- ערך חוזר
+        //        returnParameter.Direction = ParameterDirection.ReturnValue;
+
+        //    try
+        //    {
+        //        cmd.ExecuteNonQuery();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        throw (ex);
+        //    }
+
+        //    finally
+        //    {
+        //        if (con != null)
+        //        {
+        //            // close the db connection
+        //            con.Close();
+        //        }
+        //    }
+        //    return Convert.ToInt32(returnParameter.Value) == 1;
+        //}
 
         ////--------------------------------------------------------------------------------------------------
-        ////UpdateInternInSurgery
+        ////get the interns of given ssurgery -FOR THE OLD ALGO, BUT CAN BE USEFUL
         ////--------------------------------------------------------------------------------------------------
         public List<Dictionary<string, object>> GetSurgeryRoles(int surgery_id)
         {
@@ -1172,75 +1171,75 @@
         }
 
         //-----------------------------------
-        //Get Future Surgeries
+        //Get Future Surgeries - FOT THE OLD ALGO
         //-----------------------------------
-        public List<Dictionary<string, object>> GetFutureSurgeries()
-        {
-            SqlConnection con = null;
-            SqlCommand cmd;
+        //public List<Dictionary<string, object>> GetFutureSurgeries()
+        //{
+        //    SqlConnection con = null;
+        //    SqlCommand cmd;
 
-            try
-            {
-                con = connect("myProjDB");  // create the connection
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw ex; // Rethrow the original exception or log it properly
-            }
+        //    try
+        //    {
+        //        con = connect("myProjDB");  // create the connection
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        throw ex; // Rethrow the original exception or log it properly
+        //    }
 
-            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+        //    Dictionary<string, object> paramDic = new Dictionary<string, object>();
 
-            cmd = CreateCommandWithStoredProcedure("SP_FutureSurgeries", con, paramDic); // create the command
+        //    cmd = CreateCommandWithStoredProcedure("SP_FutureSurgeries", con, paramDic); // create the command
 
-            List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
-            int? lastSurgeryId = null;  // To track the last processed surgery ID
+        //    List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+        //    int? lastSurgeryId = null;  // To track the last processed surgery ID
 
-            try
-            {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
-                while (dataReader.Read())
-                {
-                    int currentSurgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+        //    try
+        //    {
+        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+        //        while (dataReader.Read())
+        //        {
+        //            int currentSurgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
 
-                    // Check if this row's surgery ID matches the last processed one
-                    if (!lastSurgeryId.HasValue || lastSurgeryId.Value != currentSurgeryId)
-                    {
-                        // New surgery entry
-                        Dictionary<string, object> surgery = new Dictionary<string, object>
-                {
-                    {"Surgery_id", currentSurgeryId},
-                    {"procedureName", Convert.ToString(dataReader["procedureName"])},
-                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
-                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
-                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
-                    {"Case_number", Convert.ToInt32(dataReader["Case_number"])},
-                    {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])}
-                };
-                        surgeries.Add(surgery);
-                        lastSurgeryId = currentSurgeryId; // Update the last surgery ID
-                    }
-                    else
-                    {
-                        // Append the procedure name to the last entry
-                        surgeries[surgeries.Count - 1]["procedureName"] += ", " + Convert.ToString(dataReader["procedureName"]);
-                    }
-                }
-                return surgeries;
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw ex; // Rethrow the original exception or log it properly
-            }
-            finally
-            {
-                if (con != null)
-                {
-                    con.Close(); // Ensure the connection is closed
-                }
-            }
-        }
+        //            // Check if this row's surgery ID matches the last processed one
+        //            if (!lastSurgeryId.HasValue || lastSurgeryId.Value != currentSurgeryId)
+        //            {
+        //                // New surgery entry
+        //                Dictionary<string, object> surgery = new Dictionary<string, object>
+        //        {
+        //            {"Surgery_id", currentSurgeryId},
+        //            {"procedureName", Convert.ToString(dataReader["procedureName"])},
+        //            {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+        //            {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+        //            {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+        //            {"Case_number", Convert.ToInt32(dataReader["Case_number"])},
+        //            {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])}
+        //        };
+        //                surgeries.Add(surgery);
+        //                lastSurgeryId = currentSurgeryId; // Update the last surgery ID
+        //            }
+        //            else
+        //            {
+        //                // Append the procedure name to the last entry
+        //                surgeries[surgeries.Count - 1]["procedureName"] += ", " + Convert.ToString(dataReader["procedureName"]);
+        //            }
+        //        }
+        //        return surgeries;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        throw ex; // Rethrow the original exception or log it properly
+        //    }
+        //    finally
+        //    {
+        //        if (con != null)
+        //        {
+        //            con.Close(); // Ensure the connection is closed
+        //        }
+        //    }
+        //}
 
 
         //---------------------------------------------------------------------------------

@@ -24,12 +24,12 @@ namespace InternViewServer.Controllers
             return Surgeries.GetSurgeriesByID(surgeryID);//return null if doesnt found
         }
 
-        [HttpGet]
-        [Route("GetFutureSurgeries")]//Use Resource routing
-        public List<Dictionary<string, object>> GetFutureSurgeries()
-        {
-            return Surgeries.GetFutureSurgeries();
-        }
+        //[HttpGet]
+        //[Route("GetFutureSurgeries")]//Use Resource routing
+        //public List<Dictionary<string, object>> GetFutureSurgeries()
+        //{
+        //    return Surgeries.GetFutureSurgeries();
+        //}
 
         [HttpGet]
         [Route("GetSurgeryRoles")]//Use Resource routing
