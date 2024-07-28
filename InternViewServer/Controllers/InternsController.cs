@@ -108,6 +108,12 @@ namespace InternViewServer.Controllers
             return Models.Intern.LogIn(i.Id, i.Password_i);
         }
 
+        [HttpPost]
+        [Route("AddIntern")] //use query string
+        public bool AddIntern([FromBody] Intern i)
+        {
+            return i.AddIntern();
+        }
 
         [HttpGet]
         [Route("GetInternSurgeriesByProcedure/{procedureID}/{internId}")]//Use Resource routing
@@ -122,9 +128,6 @@ namespace InternViewServer.Controllers
         {
             return Intern.GetInternSurgeriesByProcedureName(InternID, procedureName);
         }
-
-
-
 
         // GET: api/<Messages>
         [HttpGet]

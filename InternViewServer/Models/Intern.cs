@@ -24,6 +24,12 @@ namespace InternViewServer.Models
             return dbs.ReadIntern();
         }
 
+        public bool AddIntern()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.addIntern(this);
+        }
+
         //לקבל את כל פרטי המתמחה לפי האידי שלו
         static public Intern GetInternByID(int internID)
         {

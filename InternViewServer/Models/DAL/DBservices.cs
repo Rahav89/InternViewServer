@@ -85,7 +85,59 @@
             }
 
         }
+        //--------------------------------
+        // This method add new intern
+        //--------------------------------
+        public bool addIntern(Intern i)
+        {
 
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            paramDic.Add("@Intern_id", i.Id);
+            paramDic.Add("@Password_i", i.Password_i);
+            paramDic.Add("@First_name", i.First_name);
+            paramDic.Add("@Last_name", i.Last_name);
+            paramDic.Add("@Interns_year", i.Interns_year);
+            paramDic.Add("@Interns_rating", i.Interns_rating);
+            paramDic.Add("@isManager", i.isManager);
+            paramDic.Add("@Email_I", i.Email_I);
+
+            cmd = CreateCommandWithStoredProcedure("AddIntern", con, paramDic);   // create the command
+            try
+            {
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                                                         //int numEffected = Convert.ToInt32(cmd.ExecuteScalar()); // returning the id
+                return numEffected>=1;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
         //--------------------------------------------------------------------------------------------------
         // get intern by his ID
         //--------------------------------------------------------------------------------------------------
