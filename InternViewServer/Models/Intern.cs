@@ -27,7 +27,11 @@ namespace InternViewServer.Models
         public bool AddIntern()
         {
             DBservices dbs = new DBservices();
-            return dbs.addIntern(this);
+            if (dbs.addIntern(this))
+            {
+                return true;
+            };
+            throw new Exception("Intern ID already exists");
         }
 
         //לקבל את כל פרטי המתמחה לפי האידי שלו
