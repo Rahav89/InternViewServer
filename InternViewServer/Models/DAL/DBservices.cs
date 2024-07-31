@@ -886,7 +886,40 @@
                 }
             }
         }
+        ////--------------------------------------------------------------------------------------------------
+        ////This method Update Algorithm Weights
+        ////--------------------------------------------------------------------------------------------------
+        public int Update_Algorithm_Weights(Algorithm_Weights weights)
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
 
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+                Dictionary<string, object> paramDic = new Dictionary<string, object>();
+                paramDic.Add("@new_skills", weights.Skills);
+                paramDic.Add("@new_year_weight", weights.YearWeight);
+                paramDic.Add("@new_year_difficulty", weights.YearDifficulty);
+                paramDic.Add("@new_syllabus_weight", weights.SyllabusWeight);
+              
+                cmd = CreateCommandWithStoredProcedure("SP_Update_Algorithm_Weights", con, paramDic); // create the command
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                return numEffected; // return the number of records affected
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // Rethrow the exception after logging it
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed in the finally block
+                }
+            }
+        }
         //----------------------------
         //sets new password for intern by email
         //----------------------------

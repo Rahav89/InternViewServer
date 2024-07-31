@@ -137,5 +137,13 @@ namespace InternViewServer.Controllers
             return Intern.GetInternsForChat(id);
         }
 
+
+        // PUT api/
+        [HttpPut("updateAlgorithmWeights")]
+        public bool UpdateAlgoWeights([FromBody] Algorithm_Weights weights)
+        {
+            return (weights.Update_Algorithm_Weights() == 1);
+        }
+
     }
 }
