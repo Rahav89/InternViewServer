@@ -18,5 +18,12 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.Update_Algorithm_Weights(this);
         }
+
+        static public List<Algorithm_Weights> Read_Algorithm_Weights()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.Read_Algorithm_Weights();
+        }
+
     }
 }
