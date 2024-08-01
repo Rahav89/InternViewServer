@@ -149,7 +149,7 @@ namespace InternViewServer.Controllers
         // GET: api/<Algorithm_Weights>
         [HttpGet]
         [Route("Get_All_Algorithm_Weights")]
-        public IEnumerable<Algorithm_Weights> Get_All_Algorithm_Weights()
+        public Algorithm_Weights Get_All_Algorithm_Weights()
         {
             return Models.Algorithm_Weights.Read_Algorithm_Weights();
         }

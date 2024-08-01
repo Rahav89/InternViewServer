@@ -90,7 +90,7 @@
         //--------------------------------
         // This method Reads all Algorithm Weights
         //--------------------------------
-        public List<Algorithm_Weights> Read_Algorithm_Weights()
+        public Algorithm_Weights Read_Algorithm_Weights()
         {
 
             SqlConnection con;
@@ -108,24 +108,19 @@
 
 
             cmd = CreateCommandWithStoredProcedure("SP_Read_All_Algorithm_Weights", con, null);             // create the command
-
-
-            List<Algorithm_Weights> AlgorithmWeightsList = new List<Algorithm_Weights>();
-
+            Algorithm_Weights weights = new Algorithm_Weights();
             try
             {
                 SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
-                    Algorithm_Weights weights = new Algorithm_Weights();//צריך לבצע המרות כי חוזר אובייקט
                     weights.Skills = Convert.ToInt32(dataReader["skills"]);//המרות של טיפוסים 
                     weights.YearWeight = Convert.ToInt32(dataReader["year_weight"]);
                     weights.YearDifficulty = Convert.ToInt32(dataReader["year_difficulty"]);
                     weights.SyllabusWeight = Convert.ToInt32(dataReader["syllabus_weight"]);
-                    AlgorithmWeightsList.Add(weights);
                 }
-                return AlgorithmWeightsList;
+                return weights;
             }
             catch (Exception ex)
             {
