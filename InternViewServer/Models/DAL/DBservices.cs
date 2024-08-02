@@ -368,130 +368,130 @@
         //--------------------------------
         // This method Reads all  Surgeries
         //--------------------------------
-        public List<Surgeries> GetAllSurgeries()
-        {
-
-            SqlConnection con;
-            SqlCommand cmd;
-
-            try
-            {
-                con = connect("myProjDB"); // create the connection
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-
-            cmd = CreateCommandWithStoredProcedure("SP_ReadAllSurgeries", con, null);             // create the command
-
-
-            List<Surgeries> SurgeriesList = new List<Surgeries>();
-
-            try
-            {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
-
-                while (dataReader.Read())//מביאה רשומה רשומה 
-                {
-                    Surgeries surgery = new Surgeries();//צריך לבצע המרות כי חוזר אובייקט
-                    surgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
-                    surgery.Case_number = Convert.ToInt32(dataReader["Case_number"]);
-                    surgery.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
-                    surgery.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
-                    surgery.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
-                    surgery.Hospital_name = dataReader["Hospital_name"].ToString();
-                    SurgeriesList.Add(surgery);
-                }
-                return SurgeriesList;
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw (ex);
-            }
-
-            finally
-            {
-                if (con != null)
-                {
-                    // close the db connection
-                    con.Close();
-                }
-            }
-
-        }
-        //public List<Dictionary<string, object>> GetAllSurgeries()
+        //public List<Surgeries> GetAllSurgeries()
         //{
-        //    SqlConnection con = null;
+
+        //    SqlConnection con;
         //    SqlCommand cmd;
 
         //    try
         //    {
-        //        con = connect("myProjDB");  // Create the connection
+        //        con = connect("myProjDB"); // create the connection
         //    }
         //    catch (Exception ex)
         //    {
-        //        // Log the exception or handle it appropriately
-        //        throw ex;
+        //        // write to log
+        //        throw (ex);
         //    }
 
-        //    Dictionary<string, object> paramDic = new Dictionary<string, object>();
 
-        //    cmd = CreateCommandWithStoredProcedure("SP_ReadAllSurgeries", con, paramDic); // Create the command
+        //    cmd = CreateCommandWithStoredProcedure("SP_ReadAllSurgeries", con, null);             // create the command
 
-        //    List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
-        //    int? lastSurgeryId = null;  // To track the last processed surgery ID
-        //    Dictionary<string, object> currentSurgery = null;
+
+        //    List<Surgeries> SurgeriesList = new List<Surgeries>();
 
         //    try
         //    {
-        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
-        //        while (dataReader.Read())
-        //        {
-        //            int surgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
 
-        //            // Check if this is a new surgery
-        //            if (lastSurgeryId == null || surgeryId != lastSurgeryId)
-        //            {
-        //                // Create a new surgery entry
-        //                currentSurgery = new Dictionary<string, object>
+        //        while (dataReader.Read())//מביאה רשומה רשומה 
         //        {
-        //            {"Surgery_id", surgeryId},
-        //            {"procedureName", new List<string> { Convert.ToString(dataReader["procedureName"]) }},
-        //            {"Intern_role", Convert.ToString(dataReader["Intern_role"])},
-        //            {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
-        //            {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
-        //            {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
-        //            {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])}
-        //        };
-        //                surgeries.Add(currentSurgery);
-        //                lastSurgeryId = surgeryId; // Update the last surgery ID
-        //            }
-        //            else
-        //            {
-        //                // Append the procedure name to the existing entry's procedureName list
-        //                List<string> procedures = currentSurgery["procedureName"] as List<string>;
-        //                procedures.Add(Convert.ToString(dataReader["procedureName"]));
-        //            }
+        //            Surgeries surgery = new Surgeries();//צריך לבצע המרות כי חוזר אובייקט
+        //            surgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
+        //            surgery.Case_number = Convert.ToInt32(dataReader["Case_number"]);
+        //            surgery.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
+        //            surgery.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
+        //            surgery.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
+        //            surgery.Hospital_name = dataReader["Hospital_name"].ToString();
+        //            SurgeriesList.Add(surgery);
         //        }
-        //        return surgeries;
+        //        return SurgeriesList;
         //    }
         //    catch (Exception ex)
         //    {
-        //        // Log the exception or handle it appropriately
-        //        throw ex;
+        //        // write to log
+        //        throw (ex);
         //    }
+
         //    finally
         //    {
         //        if (con != null)
         //        {
-        //            con.Close(); // Ensure the connection is closed
+        //            // close the db connection
+        //            con.Close();
         //        }
         //    }
+
         //}
+        public List<Dictionary<string, object>> GetAllSurgeriesWithProcedures()
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                throw ex;
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            cmd = CreateCommandWithStoredProcedure("SP_ReadAllSurgeriesWithProcedures", con, paramDic); // Create the command
+
+            List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+            int? lastSurgeryId = null;  // To track the last processed surgery ID
+            Dictionary<string, object> currentSurgery = null;
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+                while (dataReader.Read())
+                {
+                    int surgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+
+                    // Check if this is a new surgery
+                    if (lastSurgeryId == null || surgeryId != lastSurgeryId)
+                    {
+                        // Create a new surgery entry
+                        currentSurgery = new Dictionary<string, object>
+                {
+                    {"Surgery_id", surgeryId},
+                    {"procedureName", new List<string> { Convert.ToString(dataReader["procedureName"]) }},
+                    {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
+                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                    {"Case_number", Convert.ToInt32(dataReader["Case_number"])}
+                };
+                        surgeries.Add(currentSurgery);
+                        lastSurgeryId = surgeryId; // Update the last surgery ID
+                    }
+                    else
+                    {
+                        // Append the procedure name to the existing entry's procedureName list
+                        List<string> procedures = currentSurgery["procedureName"] as List<string>;
+                        procedures.Add(Convert.ToString(dataReader["procedureName"]));
+                    }
+                }
+                return surgeries;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                throw ex;
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed
+                }
+            }
+        }
 
 
         //--------------------------------------------------------------------------------------------------

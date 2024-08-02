@@ -14,10 +14,10 @@ namespace InternViewServer.Models
         public int Difficulty_level { get; set; }
 
         public string Hospital_name { get; set; }
-        static public List<Surgeries> GetAllSurgeries()
+        static public List<Dictionary<string, object>> GetAllSurgeriesWithProcedures()
         {
             DBservices dbs = new DBservices();
-            return dbs.GetAllSurgeries();
+            return dbs.GetAllSurgeriesWithProcedures();
         }
         //static public List<Dictionary<string, object>> GetAllSurgeries()
         //{
