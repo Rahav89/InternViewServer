@@ -11,11 +11,16 @@ namespace InternViewServer.Controllers
     {
         // GET: api/<SurgeriesController>
         [HttpGet]
-        public IEnumerable<Surgeries> Get()
+        [Route("GetAllSurgeries/")]
+        public List<Surgeries> GetAllSurgeries()
         {
-            return Models.Surgeries.Read();
+            return Models.Surgeries.GetAllSurgeries();
         }
 
+        //public List<Dictionary<string, object>> GetAllSurgeries()
+        //{
+        //    return Models.Surgeries.GetAllSurgeries();
+        //}
 
         [HttpGet]
         [Route("GetSurgeriesByID/{surgeryID}")]//Use Resource routing

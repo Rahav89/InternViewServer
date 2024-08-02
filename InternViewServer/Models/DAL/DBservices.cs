@@ -368,7 +368,7 @@
         //--------------------------------
         // This method Reads all  Surgeries
         //--------------------------------
-        public List<Surgeries> ReadSurgeries()
+        public List<Surgeries> GetAllSurgeries()
         {
 
             SqlConnection con;
@@ -423,6 +423,77 @@
             }
 
         }
+        //public List<Dictionary<string, object>> GetAllSurgeries()
+        //{
+        //    SqlConnection con = null;
+        //    SqlCommand cmd;
+
+        //    try
+        //    {
+        //        con = connect("myProjDB");  // Create the connection
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception or handle it appropriately
+        //        throw ex;
+        //    }
+
+        //    Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+        //    cmd = CreateCommandWithStoredProcedure("SP_ReadAllSurgeries", con, paramDic); // Create the command
+
+        //    List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+        //    int? lastSurgeryId = null;  // To track the last processed surgery ID
+        //    Dictionary<string, object> currentSurgery = null;
+
+        //    try
+        //    {
+        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+        //        while (dataReader.Read())
+        //        {
+        //            int surgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+
+        //            // Check if this is a new surgery
+        //            if (lastSurgeryId == null || surgeryId != lastSurgeryId)
+        //            {
+        //                // Create a new surgery entry
+        //                currentSurgery = new Dictionary<string, object>
+        //        {
+        //            {"Surgery_id", surgeryId},
+        //            {"procedureName", new List<string> { Convert.ToString(dataReader["procedureName"]) }},
+        //            {"Intern_role", Convert.ToString(dataReader["Intern_role"])},
+        //            {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
+        //            {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+        //            {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+        //            {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])}
+        //        };
+        //                surgeries.Add(currentSurgery);
+        //                lastSurgeryId = surgeryId; // Update the last surgery ID
+        //            }
+        //            else
+        //            {
+        //                // Append the procedure name to the existing entry's procedureName list
+        //                List<string> procedures = currentSurgery["procedureName"] as List<string>;
+        //                procedures.Add(Convert.ToString(dataReader["procedureName"]));
+        //            }
+        //        }
+        //        return surgeries;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception or handle it appropriately
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        if (con != null)
+        //        {
+        //            con.Close(); // Ensure the connection is closed
+        //        }
+        //    }
+        //}
+
+
         //--------------------------------------------------------------------------------------------------
         // This method get surgery by id
         //--------------------------------------------------------------------------------------------------
@@ -485,6 +556,9 @@
             }
 
         }
+
+
+   
         //--------------------------------
         // This method Reads all Procedure
         //--------------------------------

@@ -14,12 +14,16 @@ namespace InternViewServer.Models
         public int Difficulty_level { get; set; }
 
         public string Hospital_name { get; set; }
-        static public List<Surgeries> Read()
+        static public List<Surgeries> GetAllSurgeries()
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadSurgeries();
+            return dbs.GetAllSurgeries();
         }
-
+        //static public List<Dictionary<string, object>> GetAllSurgeries()
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.GetAllSurgeries();
+        //}
         static public List<Surgeries> GetSurgeriesByID(int surgeryID)
         {
             DBservices dbs = new DBservices();
@@ -38,6 +42,6 @@ namespace InternViewServer.Models
             return dbs.GetSurgeryRoles(surgery_id);
         }
 
-
+      
     }
 }
