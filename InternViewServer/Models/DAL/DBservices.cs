@@ -85,6 +85,66 @@
             }
 
         }
+        ////--------------------------------
+        //// This method Reads all Intern Schedule
+        ////--------------------------------
+        //public List<InternSchedule> ReadAllInternSchedule()
+        //{
+
+        //    SqlConnection con;
+        //    SqlCommand cmd;
+
+        //    try
+        //    {
+        //        con = connect("myProjDB"); // create the connection
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        throw (ex);
+        //    }
+
+
+        //    cmd = CreateCommandWithStoredProcedure("SP_ReadAllInterns", con, null);             // create the command
+
+
+        //    List<Intern> InternList = new List<Intern>();
+
+        //    try
+        //    {
+        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+
+        //        while (dataReader.Read())//מביאה רשומה רשומה 
+        //        {
+        //            Intern intern = new Intern();//צריך לבצע המרות כי חוזר אובייקט
+        //            intern.Id = Convert.ToInt32(dataReader["Intern_id"]);//המרות של טיפוסים 
+        //            intern.Password_i = dataReader["Password_i"].ToString();
+        //            intern.First_name = dataReader["First_name"].ToString();
+        //            intern.Last_name = dataReader["Last_name"].ToString();
+        //            intern.Interns_year = dataReader["Interns_year"].ToString();
+        //            intern.Interns_rating = Convert.ToInt32(dataReader["Interns_rating"]);
+        //            intern.isManager = Convert.ToBoolean(dataReader["isManager"]);
+        //            intern.Email_I = dataReader["Email_I"].ToString();
+        //            InternList.Add(intern);
+        //        }
+        //        return InternList;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        throw (ex);
+        //    }
+
+        //    finally
+        //    {
+        //        if (con != null)
+        //        {
+        //            // close the db connection
+        //            con.Close();
+        //        }
+        //    }
+
+        //}
 
 
         //--------------------------------
