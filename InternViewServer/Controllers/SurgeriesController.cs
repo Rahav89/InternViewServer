@@ -43,6 +43,21 @@ namespace InternViewServer.Controllers
             return Surgeries.GetSurgeryRoles(surgery_id);
         }
 
+        //FOR ALGO :
+        [HttpGet]
+        [Route("GetSurgeriesByTime/{startDate}/{endDate}")]//Use Resource routing
+        public List<Surgeries> GetSurgeriesByTime(string startDate, string endDate)
+        {
+            return Surgeries.GetSurgeriesByTime(startDate , endDate);//return null if doesnt found
+        }
+
+        [HttpGet]
+        [Route("GetSurgeriesByTime/{SurgeryId}")]//Use Resource routing
+        public List<int> GetProceduresOfSurgery(int SurgeryId)
+        {
+            return Surgeries.GetProceduresOfSurgery(SurgeryId);//return null if doesnt found
+        }
+
         // GET api/<SurgeriesController>/5
         [HttpGet("{id}")]
         public string Get(int id)

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
+
 namespace InternViewServer.Controllers
 {
     [Route("api/[controller]")]
@@ -15,14 +16,14 @@ namespace InternViewServer.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<OptimalAssignment>> GetOptimalAssignments()
+        [HttpGet("GetOptimalAssignments/{startDate}/{endDate}")]
+        public ActionResult<IEnumerable<OptimalAssignment>> GetOptimalAssignments(string startDate, string endDate)
         {
             // Create a logger specifically for the Algorithm class
             var algorithmLogger = _loggerFactory.CreateLogger<Algorithm>();
             var algorithm = new Algorithm(algorithmLogger);
 
-            var assignments = algorithm.CalculateOptimalAssignments();
+            var assignments = algorithm.CalculateOptimalAssignments(startDate, endDate);
             return Ok(assignments);
         }
     }

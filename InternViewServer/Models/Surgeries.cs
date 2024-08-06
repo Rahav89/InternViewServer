@@ -42,6 +42,18 @@ namespace InternViewServer.Models
             return dbs.GetSurgeryRoles(surgery_id);
         }
 
-      
+        //for algorithm
+        static public List<Surgeries> GetSurgeriesByTime(string startDate, string endDate)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetSurgeriesByTime(startDate , endDate);
+        }
+
+        static public List<int> GetProceduresOfSurgery(int SurgeryId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetProceduresOfSurgery(SurgeryId);
+        }
+        //for algorithm
     }
 }

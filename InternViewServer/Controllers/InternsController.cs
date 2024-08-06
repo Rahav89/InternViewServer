@@ -54,10 +54,19 @@ namespace InternViewServer.Controllers
 
         [HttpGet]
         [Route("fullDetailedSyllabusOfIntern")]
-        public IEnumerable<DetailedSyllabusOfIntern> fullDetailedSyllabusOfIntern(int internID)
+        public List<Dictionary<string, object>> FullDetailedSyllabusOfIntern(int internID)
         {
-            return Models.Intern.fullDetailedSyllabusOfIntern(internID);
+            return Models.Intern.FullDetailedSyllabusOfIntern(internID);
         }
+
+        //!!!!!!for algo
+        [HttpGet]
+        [Route("GetInternSyllabusForAlgo")]
+        public List<Dictionary<string, object>> GetInternSyllabusForAlgo(int internID)
+        {
+            return Models.Intern.GetInternSyllabusForAlgo(internID);
+        }
+        //!!!!!!!!!!for algo
 
         // GET api/<Intenrs>/5
         [HttpGet("GetInternByID/{id}")]

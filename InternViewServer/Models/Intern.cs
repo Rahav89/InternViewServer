@@ -100,10 +100,10 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.InternProcedureSummary();
         }
-        static public List<DetailedSyllabusOfIntern> fullDetailedSyllabusOfIntern(int internId)
+        static public List<Dictionary<string, object>> FullDetailedSyllabusOfIntern(int internId)
         {
             DBservices dbs = new DBservices();
-            return dbs.fullDetailedSyllabusOfIntern(internId);
+            return dbs.FullDetailedSyllabusOfIntern(internId);
         }
 
         //מחזיר את הפרטי ניתוח לפי תעודת זהות ושם פרוצדורה
@@ -131,5 +131,13 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.GetInternsForChat(internId);
         }
+
+        //for algo
+        static public List<Dictionary<string, object>> GetInternSyllabusForAlgo(int internId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetInternSyllabusForAlgo(internId);
+        }
+        //for algo
     }
 }

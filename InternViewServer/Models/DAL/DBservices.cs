@@ -1197,10 +1197,11 @@
                 }
             }
         }
+
         //----------------------------
-        //gets all intern's procedure count by main/first/secound
+        //gets all intern's procedure count by main/first/second
         //----------------------------
-        public List<DetailedSyllabusOfIntern> fullDetailedSyllabusOfIntern(int internId)
+        public List<Dictionary<string, object>> FullDetailedSyllabusOfIntern(int internId)
         {
             SqlConnection con;
             SqlCommand cmd;
@@ -1211,16 +1212,16 @@
             }
             catch (Exception ex)
             {
-                // write to log
-                throw ex; // It's usually better to throw the original exception or log it properly
+                // Log the exception
+                throw; // It's usually better to throw the original exception or log it properly
             }
 
             Dictionary<string, object> paramDic = new Dictionary<string, object>();
-
             paramDic.Add("@Intern_id", internId);
+
             cmd = CreateCommandWithStoredProcedure("SP_GetInternDetailedSyllabus", con, paramDic); // create the command
 
-            List<DetailedSyllabusOfIntern> summaries = new List<DetailedSyllabusOfIntern>();
+            List<Dictionary<string, object>> summaries = new List<Dictionary<string, object>>();
 
             try
             {
@@ -1228,19 +1229,21 @@
 
                 while (dataReader.Read())
                 {
-                    DetailedSyllabusOfIntern summary = new DetailedSyllabusOfIntern();
-                    summary.procedure_Id = Convert.ToInt32(dataReader["procedure_Id"]);
-                    summary.procedureName = Convert.ToString(dataReader["procedureName"]);
-                    summary.category_Id = Convert.ToInt32(dataReader["category_Id"]);
-                    summary.CategoryName = Convert.ToString(dataReader["CategoryName"]);
-                    summary.requiredAsMain = Convert.ToInt32(dataReader["requiredAsMain"]);
-                    summary.requiredAsFirst = Convert.ToInt32(dataReader["requiredAsFirst"]);
-                    summary.requiredAsSecond = Convert.ToInt32(dataReader["requiredAsSecond"]);
-                    summary.doneAsMain = Convert.ToInt32(dataReader["doneAsMain"]);
-                    summary.doneAsFirst = Convert.ToInt32(dataReader["doneAsFirst"]);
-                    summary.doneAsSecond = Convert.ToInt32(dataReader["doneAsSecond"]);
-                    summary.categoryRequiredFirst = Convert.ToInt32(dataReader["categoryRequiredFirst"]);
-                    summary.categoryRequiredSecond = Convert.ToInt32(dataReader["categoryRequiredSecond"]);
+                    Dictionary<string, object> summary = new Dictionary<string, object>
+            {
+                { "procedure_Id", Convert.ToInt32(dataReader["procedure_Id"]) },
+                { "procedureName", Convert.ToString(dataReader["procedureName"]) },
+                { "category_Id", Convert.ToInt32(dataReader["category_Id"]) },
+                { "CategoryName", Convert.ToString(dataReader["CategoryName"]) },
+                { "requiredAsMain", Convert.ToInt32(dataReader["requiredAsMain"]) },
+                { "requiredAsFirst", Convert.ToInt32(dataReader["requiredAsFirst"]) },
+                { "requiredAsSecond", Convert.ToInt32(dataReader["requiredAsSecond"]) },
+                { "doneAsMain", Convert.ToInt32(dataReader["doneAsMain"]) },
+                { "doneAsFirst", Convert.ToInt32(dataReader["doneAsFirst"]) },
+                { "doneAsSecond", Convert.ToInt32(dataReader["doneAsSecond"]) },
+                { "categoryRequiredFirst", Convert.ToInt32(dataReader["categoryRequiredFirst"]) },
+                { "categoryRequiredSecond", Convert.ToInt32(dataReader["categoryRequiredSecond"]) }
+            };
                     summaries.Add(summary);
                 }
                 return summaries;
@@ -1248,8 +1251,8 @@
             }
             catch (Exception ex)
             {
-                // write to log
-                throw ex; // It's usually better to throw the original exception or log it properly
+                // Log the exception
+                throw; // It's usually better to throw the original exception or log it properly
             }
             finally
             {
@@ -1260,6 +1263,7 @@
                 }
             }
         }
+
 
         //-----------------------------------
         //Get Intern Surgeries By Procedure
@@ -1441,6 +1445,184 @@
                 }
             }
         }
+        //-----------------------------------
+        //THE FOLLOWING METHODS ARE FOR THE PLACEMENT ALGORITHM
+        //-----------------------------------
+
+        //GET the surgeries that took place between the given times
+        public List<Surgeries> GetSurgeriesByTime(string startDate ,  string endDate)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@startDate", startDate);
+            paramDic.Add("@endDate", endDate);
+
+            cmd = CreateCommandWithStoredProcedure("SP_SurgeriesByTime", con, paramDic); // create the command
+
+            List<Surgeries> SurgeriesList = new List<Surgeries>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                if (dataReader.HasRows == false)
+                {
+                    return null;  //return null if doesnt found
+                }
+                while (dataReader.Read())//מביאה רשומה רשומה 
+                {
+                    Surgeries surgery = new Surgeries();//צריך לבצע המרות כי חוזר אובייקט
+                    surgery.Surgery_id = Convert.ToInt32(dataReader["Surgery_id"]);//המרות של טיפוסים 
+                    surgery.Case_number = Convert.ToInt32(dataReader["Case_number"]);
+                    surgery.Patient_age = Convert.ToInt32(dataReader["Patient_age"]);
+                    surgery.Surgery_date = Convert.ToDateTime(dataReader["Surgery_date"]);
+                    surgery.Difficulty_level = Convert.ToInt32(dataReader["Difficulty_level"]);
+                    surgery.Hospital_name = Convert.ToString(dataReader["Hospital_name"]);
+                    SurgeriesList.Add(surgery);
+                }
+                return SurgeriesList;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+        //GET procedures id of given surgery
+
+        public List<int> GetProceduresOfSurgery(int SurgeryId)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@SurgeryId", SurgeryId);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetProceduresOfSurgery", con, paramDic); // create the command
+
+            List<int> ProceduresList = new List<int>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                if (dataReader.HasRows == false)
+                {
+                    return null;  //return null if doesnt found
+                }
+                while (dataReader.Read())//מביאה רשומה רשומה 
+                {
+                    ProceduresList.Add(Convert.ToInt32(dataReader["procedure_Id"]));
+                }
+                return ProceduresList;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+        //----------------------------
+        //gets all intern's procedure count by main/first/second - FOR ALGO
+        //----------------------------
+        public List<Dictionary<string, object>> GetInternSyllabusForAlgo(int internId)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // create the connection
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                throw; // It's usually better to throw the original exception or log it properly
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Intern_id", internId);
+
+            cmd = CreateCommandWithStoredProcedure("SP_GetInternSyllabusForAlgo", con, paramDic); // create the command
+
+            List<Dictionary<string, object>> summaries = new List<Dictionary<string, object>>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+
+                while (dataReader.Read())
+                {
+                    Dictionary<string, object> summary = new Dictionary<string, object>
+            {
+                { "procedure_Id", Convert.ToInt32(dataReader["procedure_Id"]) },
+                { "procedureName", Convert.ToString(dataReader["procedureName"]) },
+                { "category_Id", Convert.ToInt32(dataReader["category_Id"]) },
+                { "CategoryName", Convert.ToString(dataReader["CategoryName"]) },
+                { "requiredAsMain", Convert.ToInt32(dataReader["requiredAsMain"]) },
+                { "requiredAsFirst", Convert.ToInt32(dataReader["requiredAsFirst"]) },
+                { "requiredAsSecond", Convert.ToInt32(dataReader["requiredAsSecond"]) },
+                { "doneAsMain", Convert.ToInt32(dataReader["doneAsMain"]) },
+                { "doneAsFirst", Convert.ToInt32(dataReader["doneAsFirst"]) },
+                { "doneAsSecond", Convert.ToInt32(dataReader["doneAsSecond"]) },
+            };
+                    summaries.Add(summary);
+                }
+                return summaries;
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                throw; // It's usually better to throw the original exception or log it properly
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
 
         //-----------------------------------
         //Get Future Surgeries - FOT THE OLD ALGO
