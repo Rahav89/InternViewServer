@@ -67,8 +67,10 @@ namespace InternViewServer.Controllers
 
         // POST api/<SurgeriesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("AddSurgery")]//Use Resource routing
+        public int Post([FromBody] Surgeries s)
         {
+            return s.AddSurgery();
         }
 
         // PUT api/<SurgeriesController>/5

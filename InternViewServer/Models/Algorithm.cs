@@ -72,6 +72,7 @@ public static class MatchCalculator
 
         // Syllabus criteria
         List<double> syllabusScores = new List<double>();
+        // GET the Procedures of surgery from the DB
         DBservices _dbServices = new DBservices();
         List<int> procedureOfSurgery = _dbServices.GetProceduresOfSurgery(surgery.Surgery_id);
 

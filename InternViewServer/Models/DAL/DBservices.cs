@@ -1231,18 +1231,18 @@
                 {
                     Dictionary<string, object> summary = new Dictionary<string, object>
             {
-                { "procedure_Id", Convert.ToInt32(dataReader["procedure_Id"]) },
-                { "procedureName", Convert.ToString(dataReader["procedureName"]) },
-                { "category_Id", Convert.ToInt32(dataReader["category_Id"]) },
-                { "CategoryName", Convert.ToString(dataReader["CategoryName"]) },
-                { "requiredAsMain", Convert.ToInt32(dataReader["requiredAsMain"]) },
-                { "requiredAsFirst", Convert.ToInt32(dataReader["requiredAsFirst"]) },
-                { "requiredAsSecond", Convert.ToInt32(dataReader["requiredAsSecond"]) },
-                { "doneAsMain", Convert.ToInt32(dataReader["doneAsMain"]) },
-                { "doneAsFirst", Convert.ToInt32(dataReader["doneAsFirst"]) },
-                { "doneAsSecond", Convert.ToInt32(dataReader["doneAsSecond"]) },
-                { "categoryRequiredFirst", Convert.ToInt32(dataReader["categoryRequiredFirst"]) },
-                { "categoryRequiredSecond", Convert.ToInt32(dataReader["categoryRequiredSecond"]) }
+                        { "procedure_Id", Convert.ToInt32(dataReader["procedure_Id"]) },
+                        { "procedureName", Convert.ToString(dataReader["procedureName"]) },
+                        { "category_Id", Convert.ToInt32(dataReader["category_Id"]) },
+                        { "categoryName", Convert.ToString(dataReader["CategoryName"]) },
+                        { "requiredAsMain", Convert.ToInt32(dataReader["requiredAsMain"]) },
+                        { "requiredAsFirst", Convert.ToInt32(dataReader["requiredAsFirst"]) },
+                        { "requiredAsSecond", Convert.ToInt32(dataReader["requiredAsSecond"]) },
+                        { "doneAsMain", Convert.ToInt32(dataReader["doneAsMain"]) },
+                        { "doneAsFirst", Convert.ToInt32(dataReader["doneAsFirst"]) },
+                        { "doneAsSecond", Convert.ToInt32(dataReader["doneAsSecond"]) },
+                        { "categoryRequiredFirst", Convert.ToInt32(dataReader["categoryRequiredFirst"]) },
+                        { "categoryRequiredSecond", Convert.ToInt32(dataReader["categoryRequiredSecond"]) }
             };
                     summaries.Add(summary);
                 }
@@ -1360,11 +1360,11 @@
                 {
                     Dictionary<string, object> surgeryDetails = new Dictionary<string, object>
             {
-                {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
-                {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
-                {"Hospital_name",Convert.ToString(dataReader["Hospital_name"])},
-                {"Procedure_name", Convert.ToString(dataReader["procedureName"])},
-                {"Intern_role", Convert.ToString(dataReader["Intern_role"])}
+                        {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                        {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                        {"Hospital_name",Convert.ToString(dataReader["Hospital_name"])},
+                        {"Procedure_name", Convert.ToString(dataReader["procedureName"])},
+                        {"Intern_role", Convert.ToString(dataReader["Intern_role"])}
             };
 
                     internSBPList.Add(surgeryDetails);
@@ -1591,18 +1591,18 @@
                 while (dataReader.Read())
                 {
                     Dictionary<string, object> summary = new Dictionary<string, object>
-            {
-                { "procedure_Id", Convert.ToInt32(dataReader["procedure_Id"]) },
-                { "procedureName", Convert.ToString(dataReader["procedureName"]) },
-                { "category_Id", Convert.ToInt32(dataReader["category_Id"]) },
-                { "CategoryName", Convert.ToString(dataReader["CategoryName"]) },
-                { "requiredAsMain", Convert.ToInt32(dataReader["requiredAsMain"]) },
-                { "requiredAsFirst", Convert.ToInt32(dataReader["requiredAsFirst"]) },
-                { "requiredAsSecond", Convert.ToInt32(dataReader["requiredAsSecond"]) },
-                { "doneAsMain", Convert.ToInt32(dataReader["doneAsMain"]) },
-                { "doneAsFirst", Convert.ToInt32(dataReader["doneAsFirst"]) },
-                { "doneAsSecond", Convert.ToInt32(dataReader["doneAsSecond"]) },
-            };
+                    {
+                        { "procedure_Id", Convert.ToInt32(dataReader["procedure_Id"]) },
+                        { "procedureName", Convert.ToString(dataReader["procedureName"]) },
+                        { "category_Id", Convert.ToInt32(dataReader["category_Id"]) },
+                        { "CategoryName", Convert.ToString(dataReader["CategoryName"]) },
+                        { "requiredAsMain", Convert.ToInt32(dataReader["requiredAsMain"]) },
+                        { "requiredAsFirst", Convert.ToInt32(dataReader["requiredAsFirst"]) },
+                        { "requiredAsSecond", Convert.ToInt32(dataReader["requiredAsSecond"]) },
+                        { "doneAsMain", Convert.ToInt32(dataReader["doneAsMain"]) },
+                        { "doneAsFirst", Convert.ToInt32(dataReader["doneAsFirst"]) },
+                        { "doneAsSecond", Convert.ToInt32(dataReader["doneAsSecond"]) },
+                    };
                     summaries.Add(summary);
                 }
                 return summaries;
@@ -1694,6 +1694,60 @@
         //        }
         //    }
         //}
+
+        public int AddSurgery(Surgeries S)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            int result = 0; // Default result indicating failure
+
+            try
+            {
+                con = connect("myProjDB"); // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Write to log
+                Console.WriteLine("Connection Error: " + ex.Message);
+                throw;
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            paramDic.Add("@Case_number", S.Case_number);
+            paramDic.Add("@Patient_age", S.Patient_age);
+            paramDic.Add("@Surgery_date", S.Surgery_date);
+            paramDic.Add("@Difficulty_level", S.Difficulty_level);
+            paramDic.Add("@Hospital_name", S.Hospital_name);
+
+            cmd = CreateCommandWithStoredProcedure("InsertSurgery", con, paramDic); // Create the command
+
+            // Add a parameter to capture the return value
+            SqlParameter returnParameter = new SqlParameter();
+            returnParameter.Direction = ParameterDirection.ReturnValue;
+            cmd.Parameters.Add(returnParameter);
+
+            try
+            {
+                cmd.ExecuteNonQuery(); // Execute the command
+                result = (int)returnParameter.Value; // Capture the return value from the stored procedure
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Log any other exceptions
+                Console.WriteLine("Error: " + ex.Message);
+                throw;
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // Close the DB connection
+                    con.Close();
+                }
+            }
+        }
 
 
         //---------------------------------------------------------------------------------
