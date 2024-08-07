@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using InternViewServer.Models;
 
 
 namespace InternViewServer.Controllers
@@ -25,6 +26,14 @@ namespace InternViewServer.Controllers
 
             var assignments = algorithm.CalculateOptimalAssignments(startDate, endDate);
             return Ok(assignments);
+        }
+
+        // GET: api/<Algorithm_Weights>
+        [HttpGet]
+        [Route("Get_All_Algorithm_Weights")]
+        public Algorithm_Weights Get_All_Algorithm_Weights()
+        {
+            return Algorithm_Weights.Read_Algorithm_Weights();
         }
     }
 }

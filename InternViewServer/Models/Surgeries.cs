@@ -78,5 +78,11 @@ namespace InternViewServer.Models
             return dbs.GetProceduresOfSurgery(SurgeryId);
         }
         //for algorithm
+
+        static public bool AddProcedureInSurgery(int surgery_id, int procedure_Id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.AddProcedureInSurgery(surgery_id , procedure_Id);
+        }
     }
 }

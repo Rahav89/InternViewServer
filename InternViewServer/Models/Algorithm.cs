@@ -35,7 +35,7 @@ public static class MatchCalculator
         Intern_ intern,
         Surgeries surgery,
         List<Dictionary<string, object>> syllabusData,
-        Dictionary<string, double> weights,
+        Algorithm_Weights weights,
         string role,
         ILogger logger)
     {
@@ -45,29 +45,29 @@ public static class MatchCalculator
         {
             if (intern.InternsRating >= 7)
             {
-                skillScore = weights["skills"];
+                skillScore = weights.Skills;
             }
         }
         else if (surgery.Difficulty_level == 2)
         {
             if (intern.InternsRating >= 5)
             {
-                skillScore = weights["skills"];
+                skillScore = weights.Skills;
             }
         }
         else
         {
-            skillScore = weights["skills"];
+            skillScore = weights.Skills;
         }
 
         // Year criteria
         double yearScore = intern.InternsYear switch
         {
-            6 => weights["year"],
-            5 => weights["year"] * 0.8,
-            4 => weights["year"] * 0.6,
-            3 => weights["year"] * 0.4,
-            _ => weights["year"] * 0.2
+            6 => weights.YearWeight,
+            5 => weights.YearWeight * 0.8,
+            4 => weights.YearWeight * 0.6,
+            3 => weights.YearWeight * 0.4,
+            _ => weights.YearWeight * 0.2
         };
 
         // Syllabus criteria
@@ -108,15 +108,15 @@ public static class MatchCalculator
                     double syllabusScore = 0.0;
                     if (completion <= 10 || completion >= 80)
                     {
-                        syllabusScore = weights["syllabus"];
+                        syllabusScore = weights.SyllabusWeight;
                     }
                     else if ((completion > 10 && completion <= 30) || (completion >= 60 && completion < 80))
                     {
-                        syllabusScore = weights["syllabus"] * 0.6;
+                        syllabusScore = weights.SyllabusWeight * 0.6;
                     }
                     else if (completion > 30 && completion < 60)
                     {
-                        syllabusScore = weights["syllabus"] * 0.4;
+                        syllabusScore = weights.SyllabusWeight * 0.4;
                     }
                     logger.LogInformation($"Intern {intern.InternName} (ID: {intern.InternId}) - Surgery {surgery.Surgery_id} - Procedure {procedure} - Role {role}: completion={completion:F2}%, syllabus_score={syllabusScore}");
                     syllabusScores.Add(syllabusScore);
@@ -129,7 +129,7 @@ public static class MatchCalculator
         // Year and difficulty level criteria
         double yearDifficultyScore = (intern.InternsYear <= 3 && surgery.Difficulty_level <= 2) ||
                                      (intern.InternsYear >= 4 && surgery.Difficulty_level <= 3)
-                                     ? weights["year_difficulty"]
+                                     ? weights.YearDifficulty
                                      : 0.0;
 
         // Debug output
@@ -149,7 +149,7 @@ public static class MatchCalculator
         List<Intern_> interns,
         List<Surgeries> surgeries,
         Dictionary<int, List<Dictionary<string, object>>> syllabuses,
-        Dictionary<string, double> weights,
+        Algorithm_Weights weights,
         ILogger logger)
     {
         List<MatchResult> results = new List<MatchResult>();
@@ -214,16 +214,10 @@ public class Algorithm
         }
 
         // Prepare weights for scoring
-        var weights = new Dictionary<string, double>
-        {
-            { "skills", 25.0 },
-            { "year", 25.0 },
-            { "syllabus", 25.0 },
-            { "year_difficulty", 25.0 }
-        };
+        Algorithm_Weights weights = dbs.Read_Algorithm_Weights();
 
-        // Calculate all matches
-        var matchResults = MatchCalculator.CalculateAllMatches(interns, surgeries, detailedSyllabuses, weights, _logger);
+    // Calculate all matches
+    var matchResults = MatchCalculator.CalculateAllMatches(interns, surgeries, detailedSyllabuses, weights, _logger);
 
         // Log match results for debugging
         _logger.LogInformation("Match Scores Matrix:");

@@ -12,10 +12,6 @@ namespace InternViewServer.Controllers
         // GET: api/<SurgeriesController>
         [HttpGet]
         [Route("GetAllSurgeries/")]
-        //public List<Surgeries> GetAllSurgeries()
-        //{
-        //    return Models.Surgeries.GetAllSurgeries();
-        //}
 
         public List<Dictionary<string, object>> GetAllSurgeriesWithProcedures()
         {
@@ -29,6 +25,12 @@ namespace InternViewServer.Controllers
             return Surgeries.GetSurgeriesByID(surgeryID);//return null if doesnt found
         }
 
+        //[HttpGet]
+        //[Route("GetAllSurgeries/")]
+        //public List<Surgeries> GetAllSurgeries()
+        //{
+        //    return Models.Surgeries.GetAllSurgeries();
+        //}
         //[HttpGet]
         //[Route("GetFutureSurgeries")]//Use Resource routing
         //public List<Dictionary<string, object>> GetFutureSurgeries()
@@ -71,6 +73,14 @@ namespace InternViewServer.Controllers
         public int Post([FromBody] Surgeries s)
         {
             return s.AddSurgery();
+        }
+
+        // POST api/<SurgeriesController>
+        [HttpPost]
+        [Route("AddProcedureInSurgery")]//Use Resource routing
+        public bool AddProcedureInSurgery(int surgery_id, int procedure_Id)
+        {
+            return Surgeries.AddProcedureInSurgery(surgery_id , procedure_Id) ;
         }
 
         // PUT api/<SurgeriesController>/5

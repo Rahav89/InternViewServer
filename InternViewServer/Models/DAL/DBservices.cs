@@ -1749,7 +1749,52 @@
             }
         }
 
+        public bool AddProcedureInSurgery(int surgery_id, int procedure_Id)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            int result = 0; // Default result indicating failure
 
+            try
+            {
+                con = connect("myProjDB"); // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Write to log
+                Console.WriteLine("Connection Error: " + ex.Message);
+                throw;
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            paramDic.Add("@Surgery_id", surgery_id);
+            paramDic.Add("@procedure_Id", procedure_Id);
+
+
+            cmd = CreateCommandWithStoredProcedure("AddProcedureInSurgery", con, paramDic); // Create the command
+
+            try
+            {
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                                                         //int numEffected = Convert.ToInt32(cmd.ExecuteScalar()); // returning the id
+                return numEffected >= 1;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------
