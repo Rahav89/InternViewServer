@@ -1795,6 +1795,106 @@
                 }
             }
         }
+        
+        public int AddInternDutySchedule(InternSchedule IS)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            int result = 0; // Default result indicating failure
+
+            try
+            {
+                con = connect("myProjDB"); // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Write to log
+                Console.WriteLine("Connection Error: " + ex.Message);
+                throw;
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@DutyDate", IS.DutyDate.Date);
+            paramDic.Add("@Intern_id", IS.Intern_id);
+
+
+            cmd = CreateCommandWithStoredProcedure("AddDutySchedule", con, paramDic); // Create the command
+
+            // Add a parameter to capture the return value
+            SqlParameter returnParameter = new SqlParameter();
+            returnParameter.Direction = ParameterDirection.ReturnValue;
+            cmd.Parameters.Add(returnParameter);
+
+            try
+            {
+                cmd.ExecuteNonQuery(); // Execute the command
+                result = (int)returnParameter.Value; // Capture the return value from the stored procedure
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+
+        public List<InternSchedule> GetAllInternsDutySchedule()
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            cmd = CreateCommandWithStoredProcedure("GetAllnternsDutySchedule", con, null); // create the command
+
+            List<InternSchedule> internsDutySchedule = new List<InternSchedule>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // create the object that reads from SQL
+
+                while (dataReader.Read()) // brings record by record
+                {
+                    InternSchedule internSchedule = new InternSchedule();
+                    internSchedule.DutyDate = Convert.ToDateTime(dataReader["DutyDate"]);
+                    internSchedule.Intern_id = Convert.ToInt32(dataReader["Intern_id"]);
+
+                    internsDutySchedule.Add(internSchedule);
+                }
+                return internsDutySchedule;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
         //---------------------------------------------------------------------------------
         // Create the SqlCommand using a stored procedure
         //---------------------------------------------------------------------------------

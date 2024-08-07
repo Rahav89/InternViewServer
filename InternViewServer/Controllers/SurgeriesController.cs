@@ -75,6 +75,7 @@ namespace InternViewServer.Controllers
             return s.AddSurgery();
         }
 
+        //!!for Procedure In Surgery
         // POST api/<SurgeriesController>
         [HttpPost]
         [Route("AddProcedureInSurgery")]//Use Resource routing
@@ -82,6 +83,7 @@ namespace InternViewServer.Controllers
         {
             return Surgeries.AddProcedureInSurgery(surgery_id , procedure_Id) ;
         }
+        //!!for Procedure In Surgery
 
         // PUT api/<SurgeriesController>/5
         [HttpPut("{id}")]

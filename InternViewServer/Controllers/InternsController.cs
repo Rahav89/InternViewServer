@@ -146,16 +146,20 @@ namespace InternViewServer.Controllers
             return Intern.GetInternsForChat(id);
         }
 
-
-        // PUT api/
-        [HttpPut("updateAlgorithmWeights")]
-        public bool UpdateAlgoWeights([FromBody] Algorithm_Weights weights)
+        //!!for Intern Duty Schedule
+        [HttpPost]
+        [Route("AddInternDutySchedule")]//Use Resource routing 
+        public int AddInternDutySchedule([FromBody] InternSchedule IS)
         {
-            return (weights.Update_Algorithm_Weights() == 1);
+            return IS.AddInternDutySchedule();
         }
 
-
-       
-
+        [HttpGet]
+        [Route("GetAllInternsDutySchedule")]
+        public List<InternSchedule> GetAllInternsDutySchedule()
+        {
+            return InternSchedule.GetAllInternsDutySchedule();
+        }
+        //!!for Intern Duty Schedule
     }
 }

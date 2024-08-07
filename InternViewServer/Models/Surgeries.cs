@@ -29,23 +29,7 @@ namespace InternViewServer.Models
         {
 
             DBservices dbs = new DBservices();
-            int addResult = dbs.AddSurgery(this);
-
-            switch (addResult)
-            {
-                case 1:
-                    // Success: return success response
-                    return 1;
-                case -1:
-                    // Error: Conflict within two hours
-                    return -1; //("Cannot schedule a surgery within two hours of another surgery at the same hospital.");
-                case -2:
-                    // Error: More than two surgeries on the same day
-                    return -2;// ("Cannot schedule more than two surgeries on the same day at the same hospital.");
-                default:
-                    // General failure or no rows affected
-                    throw new Exception("Failed to add surgery. Please check your data.");
-            }
+            return dbs.AddSurgery(this);
 
         }
         //static public List<Dictionary<string, object>> GetAllSurgeries()
@@ -79,10 +63,12 @@ namespace InternViewServer.Models
         }
         //for algorithm
 
+        //!!for Procedure In Surgery
         static public bool AddProcedureInSurgery(int surgery_id, int procedure_Id)
         {
             DBservices dbs = new DBservices();
             return dbs.AddProcedureInSurgery(surgery_id , procedure_Id);
         }
+        //!!for Procedure In Surgery
     }
 }

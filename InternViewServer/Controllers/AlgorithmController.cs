@@ -35,5 +35,12 @@ namespace InternViewServer.Controllers
         {
             return Algorithm_Weights.Read_Algorithm_Weights();
         }
+
+        // PUT api/
+        [HttpPut("updateAlgorithmWeights")]
+        public bool UpdateAlgoWeights([FromBody] Algorithm_Weights weights)
+        {
+            return (weights.Update_Algorithm_Weights() == 1);
+        }
     }
 }
