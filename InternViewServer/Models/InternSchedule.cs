@@ -7,15 +7,27 @@ namespace InternViewServer.Models
         public DateTime DutyDate { get; set; }     // Unique identifier for each schedule entry
         public int Intern_id { get; set; }       // Reference to the intern's ID from Interns_Table
 
-        static public List<InternSchedule> GetAllInternsDutySchedule()
+        static public List<InternSchedule> GetAllInternsShiftsSchedule()
         {
             DBservices dbs = new DBservices();
-            return dbs.GetAllInternsDutySchedule();
+            return dbs.GetAllInternsShiftsSchedule();
         }
-        public int AddInternDutySchedule()
+        public int AddInternsShiftsSchedule()
         {
             DBservices dbs = new DBservices();
-            return dbs.AddInternDutySchedule(this);
+            return dbs.AddInternsShiftsSchedule(this);
+        }
+
+        public bool DeleteInternsShiftsSchedule()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.DeleteInternsShiftsSchedule(this);
+        }
+
+        static public List<int> GetInternsOnDutyDayBefore(DateTime GivenDate)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetInternsOnDutyDayBefore(GivenDate);
         }
     }
 

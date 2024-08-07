@@ -52,7 +52,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
@@ -112,7 +112,7 @@
 
         //    try
         //    {
-        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
         //        while (dataReader.Read())//מביאה רשומה רשומה 
         //        {
@@ -171,7 +171,7 @@
             Algorithm_Weights weights = new Algorithm_Weights();
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
@@ -276,7 +276,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 if (dataReader.HasRows == false)
                 {
@@ -386,7 +386,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 if (dataReader.HasRows == false)
                 {
@@ -452,7 +452,7 @@
 
         //    try
         //    {
-        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+        //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
         //        while (dataReader.Read())//מביאה רשומה רשומה 
         //        {
@@ -583,7 +583,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 if (dataReader.HasRows == false)
                 {
                     return null;  //return null if doesnt found
@@ -939,7 +939,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
@@ -1002,7 +1002,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 while (dataReader.Read())//מביאה רשומה רשומה 
                 {
@@ -1475,7 +1475,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 if (dataReader.HasRows == false)
                 {
                     return null;  //return null if doesnt found
@@ -1534,7 +1534,7 @@
 
             try
             {
-                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);// יצירת האובייקט שקורא מהסקיואל
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 if (dataReader.HasRows == false)
                 {
                     return null;  //return null if doesnt found
@@ -1796,7 +1796,7 @@
             }
         }
         
-        public int AddInternDutySchedule(InternSchedule IS)
+        public int AddInternsShiftsSchedule(InternSchedule IS)
         {
             SqlConnection con;
             SqlCommand cmd;
@@ -1818,7 +1818,7 @@
             paramDic.Add("@Intern_id", IS.Intern_id);
 
 
-            cmd = CreateCommandWithStoredProcedure("AddDutySchedule", con, paramDic); // Create the command
+            cmd = CreateCommandWithStoredProcedure("Add_Interns_shifts_Schedule", con, paramDic); // Create the command
 
             // Add a parameter to capture the return value
             SqlParameter returnParameter = new SqlParameter();
@@ -1847,7 +1847,7 @@
             }
         }
 
-        public List<InternSchedule> GetAllInternsDutySchedule()
+        public List<InternSchedule> GetAllInternsShiftsSchedule()
         {
             SqlConnection con;
             SqlCommand cmd;
@@ -1863,7 +1863,7 @@
                 throw (ex);
             }
 
-            cmd = CreateCommandWithStoredProcedure("GetAllnternsDutySchedule", con, null); // create the command
+            cmd = CreateCommandWithStoredProcedure("Get_All_Interns_shifts_Schedule", con, null); // create the command
 
             List<InternSchedule> internsDutySchedule = new List<InternSchedule>();
 
@@ -1880,6 +1880,99 @@
                     internsDutySchedule.Add(internSchedule);
                 }
                 return internsDutySchedule;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+        }
+        
+        public bool DeleteInternsShiftsSchedule(InternSchedule IS)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@DutyDate", IS.DutyDate);
+            paramDic.Add("@Intern_id", IS.Intern_id);
+
+            cmd = CreateCommandWithStoredProcedure("DeleteFromInterns_shifts_Schedule", con, paramDic); // create the command
+
+            try
+            {
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                                                         //int numEffected = Convert.ToInt32(cmd.ExecuteScalar()); // returning the id
+                return numEffected>=1;
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+
+        }
+        public List<int> GetInternsOnDutyDayBefore(DateTime GivenDate)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@GivenDate", GivenDate);
+
+            cmd = CreateCommandWithStoredProcedure("GetInternsOnDutyDayBefore", con, paramDic); // create the command
+
+
+            List<int> internsIDS = new List<int>();
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // create the object that reads from SQL
+
+                while (dataReader.Read()) // brings record by record
+                {
+                    int internID = Convert.ToInt32(dataReader["Intern_id"]);
+
+                    internsIDS.Add(internID);
+                }
+                return internsIDS;
             }
             catch (Exception ex)
             {

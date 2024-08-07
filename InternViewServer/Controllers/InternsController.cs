@@ -145,21 +145,5 @@ namespace InternViewServer.Controllers
         {
             return Intern.GetInternsForChat(id);
         }
-
-        //!!for Intern Duty Schedule
-        [HttpPost]
-        [Route("AddInternDutySchedule")]//Use Resource routing 
-        public int AddInternDutySchedule([FromBody] InternSchedule IS)
-        {
-            return IS.AddInternDutySchedule();
-        }
-
-        [HttpGet]
-        [Route("GetAllInternsDutySchedule")]
-        public List<InternSchedule> GetAllInternsDutySchedule()
-        {
-            return InternSchedule.GetAllInternsDutySchedule();
-        }
-        //!!for Intern Duty Schedule
     }
 }

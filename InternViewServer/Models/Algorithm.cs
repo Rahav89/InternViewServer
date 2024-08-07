@@ -5,13 +5,6 @@ using Google.OrTools.Sat;
 using Microsoft.Extensions.Logging;
 using InternViewServer.Models.DAL;
 using InternViewServer.Models;
-public class Intern_
-{
-    public int InternId { get; set; }
-    public string InternName { get; set; }
-    public int InternsRating { get; set; }
-    public int InternsYear { get; set; }
-}
 
 public class MatchResult
 {
@@ -32,25 +25,47 @@ public class OptimalAssignment
 public static class MatchCalculator
 {
     public static double CalculateMatchScore(
-        Intern_ intern,
-        Surgeries surgery,
-        List<Dictionary<string, object>> syllabusData,
-        Algorithm_Weights weights,
-        string role,
-        ILogger logger)
+    Intern intern,
+    Surgeries surgery,
+    List<Dictionary<string, object>> syllabusData,
+    Algorithm_Weights weights,
+    string role,
+    ILogger logger)
     {
+        // Null check for intern and surgery
+        if (intern == null || surgery == null)
+        {
+            logger.LogError("Intern or surgery object is null.");
+            return 0.0;
+        }
+
+        // Null check for syllabusData
+        if (syllabusData == null || syllabusData.Count == 0)
+        {
+            logger.LogWarning($"No syllabus data found for intern {intern.Id} during surgery {surgery.Surgery_id}.");
+            return 0.0;
+        }
+
+        // Safely parse Interns_year as a date and calculate years of training
+        if (!DateTime.TryParse(intern.Interns_year, out DateTime startYear))
+        {
+            logger.LogError($"Invalid date format for Interns_year '{intern.Interns_year}' for intern {intern.Id}.");
+            return 0.0; // Return a default score or handle as needed
+        }
+        int internYears = DateTime.Now.Year - startYear.Year;
+
         // Skills criteria
         double skillScore = 0.0;
         if (surgery.Difficulty_level == 3)
         {
-            if (intern.InternsRating >= 7)
+            if (intern.Interns_rating >= 7)
             {
                 skillScore = weights.Skills;
             }
         }
         else if (surgery.Difficulty_level == 2)
         {
-            if (intern.InternsRating >= 5)
+            if (intern.Interns_rating >= 5)
             {
                 skillScore = weights.Skills;
             }
@@ -61,7 +76,7 @@ public static class MatchCalculator
         }
 
         // Year criteria
-        double yearScore = intern.InternsYear switch
+        double yearScore = internYears switch
         {
             6 => weights.YearWeight,
             5 => weights.YearWeight * 0.8,
@@ -72,9 +87,8 @@ public static class MatchCalculator
 
         // Syllabus criteria
         List<double> syllabusScores = new List<double>();
-        // GET the Procedures of surgery from the DB
         DBservices _dbServices = new DBservices();
-        List<int> procedureOfSurgery = _dbServices.GetProceduresOfSurgery(surgery.Surgery_id);
+        List<int> procedureOfSurgery = _dbServices.GetProceduresOfSurgery(surgery.Surgery_id) ?? new List<int>();
 
         foreach (int procedure in procedureOfSurgery)
         {
@@ -100,11 +114,11 @@ public static class MatchCalculator
                         break;
                 }
 
-                int need = totalNeeded - totalDone;
-
-                if (need > 0)
+                // Ensure no division by zero
+                if (totalNeeded > 0)
                 {
-                    double completion = ((double)need / totalNeeded) * 100;
+                    int need = totalNeeded - totalDone;
+                    double completion = ((double)totalDone / totalNeeded) * 100;
                     double syllabusScore = 0.0;
                     if (completion <= 10 || completion >= 80)
                     {
@@ -118,7 +132,7 @@ public static class MatchCalculator
                     {
                         syllabusScore = weights.SyllabusWeight * 0.4;
                     }
-                    logger.LogInformation($"Intern {intern.InternName} (ID: {intern.InternId}) - Surgery {surgery.Surgery_id} - Procedure {procedure} - Role {role}: completion={completion:F2}%, syllabus_score={syllabusScore}");
+                    logger.LogInformation($"Intern {intern.First_name} {intern.Last_name} (ID: {intern.Id}) - Surgery {surgery.Surgery_id} - Procedure {procedure} - Role {role}: completion={completion:F2}%, syllabus_score={syllabusScore}");
                     syllabusScores.Add(syllabusScore);
                 }
             }
@@ -127,26 +141,27 @@ public static class MatchCalculator
         double syllabusScoreAvg = syllabusScores.Any() ? syllabusScores.Average() : 0.0;
 
         // Year and difficulty level criteria
-        double yearDifficultyScore = (intern.InternsYear <= 3 && surgery.Difficulty_level <= 2) ||
-                                     (intern.InternsYear >= 4 && surgery.Difficulty_level <= 3)
+        double yearDifficultyScore = (internYears <= 3 && surgery.Difficulty_level <= 2) ||
+                                     (internYears >= 4 && surgery.Difficulty_level <= 3)
                                      ? weights.YearDifficulty
                                      : 0.0;
 
         // Debug output
-        logger.LogInformation($"Intern {intern.InternName} (ID: {intern.InternId}) - Surgery {surgery.Surgery_id} - Role {role}: skill_score={skillScore}, year_score={yearScore}, syllabus_score={syllabusScoreAvg}, year_difficulty_score={yearDifficultyScore}");
+        logger.LogInformation($"Intern {intern.First_name} {intern.Last_name} (ID: {intern.Id}) - Surgery {surgery.Surgery_id} - Role {role}: skill_score={skillScore}, year_score={yearScore}, syllabus_score={syllabusScoreAvg}, year_difficulty_score={yearDifficultyScore}");
 
         // Total score calculation
         double totalScore = skillScore + yearScore + syllabusScoreAvg + yearDifficultyScore;
         double matchScore = totalScore / 10.0; // No rounding
 
         // Final score output
-        logger.LogInformation($"Intern {intern.InternName} (ID: {intern.InternId}) - Surgery {surgery.Surgery_id} - Role {role}: final_match_score={matchScore}");
+        logger.LogInformation($"Intern {intern.First_name} {intern.Last_name} (ID: {intern.Id}) - Surgery {surgery.Surgery_id} - Role {role}: final_match_score={matchScore}");
 
         return matchScore;
     }
 
+
     public static List<MatchResult> CalculateAllMatches(
-        List<Intern_> interns,
+        List<Intern> interns,
         List<Surgeries> surgeries,
         Dictionary<int, List<Dictionary<string, object>>> syllabuses,
         Algorithm_Weights weights,
@@ -155,16 +170,35 @@ public static class MatchCalculator
         List<MatchResult> results = new List<MatchResult>();
         string[] roles = { "main", "first", "second" };
 
-        foreach (var intern in interns)
+        foreach (var surgery in surgeries)
         {
-            if (syllabuses.TryGetValue(intern.InternId, out var internSyllabuses))
+            // Get interns on duty the day before the surgery
+            DBservices dbs = new DBservices();
+            List<int> internsOnDutyDayBefore = dbs.GetInternsOnDutyDayBefore(surgery.Surgery_date);
+
+            foreach (var intern in interns)
             {
-                foreach (var surgery in surgeries)
+                // Check if the intern is on duty the day before the surgery
+                bool isInternOnDutyDayBefore = internsOnDutyDayBefore.Contains(intern.Id);
+
+                if (syllabuses.TryGetValue(intern.Id, out var internSyllabuses))
                 {
                     foreach (var role in roles)
                     {
-                        double matchScore = CalculateMatchScore(intern, surgery, internSyllabuses, weights, role, logger);
-                        results.Add(new MatchResult { InternId = intern.InternId, SurgeryId = surgery.Surgery_id, Role = role, MatchScore = matchScore });
+                        double matchScore;
+
+                        if (isInternOnDutyDayBefore)
+                        {
+                            // Assign a low score if the intern is on duty the day before
+                            matchScore = -1.0; // Or 0.0, depending on preference
+                        }
+                        else
+                        {
+                            // Calculate the actual match score
+                            matchScore = CalculateMatchScore(intern, surgery, internSyllabuses, weights, role, logger);
+                        }
+
+                        results.Add(new MatchResult { InternId = intern.Id, SurgeryId = surgery.Surgery_id, Role = role, MatchScore = matchScore });
                     }
                 }
             }
@@ -172,6 +206,7 @@ public static class MatchCalculator
 
         return results;
     }
+
 }
 
 
@@ -186,6 +221,7 @@ public class Algorithm
         dbs = new DBservices();
     }
 
+
     public List<OptimalAssignment> CalculateOptimalAssignments(string startDate, string endDate)
     {
         // Fetch surgeries within the date range
@@ -197,27 +233,29 @@ public class Algorithm
         }
 
         // Fetch all interns
-        var interns = new List<Intern_>
+        var interns = dbs.ReadIntern();
+        if (interns == null || !interns.Any())
         {
-            new Intern_ { InternId = 1, InternName = "John Doe", InternsRating = 2, InternsYear = 1 },
-            new Intern_ { InternId = 2, InternName = "Jane Smith", InternsRating = 6, InternsYear = 4 },
-            new Intern_ { InternId = 3, InternName = "Mike Johnson", InternsRating = 7, InternsYear = 3 },
-            new Intern_ { InternId = 4, InternName = "Emily Davis", InternsRating = 9, InternsYear = 6 }
-        };
-
-        // Fetch syllabus for each intern using the list of dictionaries
-        var detailedSyllabuses = new Dictionary<int, List<Dictionary<string, object>>>();
-        foreach (var intern in interns)
-        {
-            var internSyllabus = dbs.GetInternSyllabusForAlgo(intern.InternId);
-            detailedSyllabuses[intern.InternId] = internSyllabus;
+            _logger.LogWarning("No interns found.");
+            return new List<OptimalAssignment>();
         }
 
         // Prepare weights for scoring
         Algorithm_Weights weights = dbs.Read_Algorithm_Weights();
 
-    // Calculate all matches
-    var matchResults = MatchCalculator.CalculateAllMatches(interns, surgeries, detailedSyllabuses, weights, _logger);
+        // Initialize detailed syllabuses
+        var detailedSyllabuses = new Dictionary<int, List<Dictionary<string, object>>>();
+        foreach (var intern in interns)
+        {
+            var internSyllabus = dbs.GetInternSyllabusForAlgo(intern.Id);
+            if (internSyllabus != null)
+            {
+                detailedSyllabuses[intern.Id] = internSyllabus;
+            }
+        }
+
+        // Calculate all matches using the match calculator
+        var matchResults = MatchCalculator.CalculateAllMatches(interns, surgeries, detailedSyllabuses, weights, _logger);
 
         // Log match results for debugging
         _logger.LogInformation("Match Scores Matrix:");
@@ -226,10 +264,10 @@ public class Algorithm
         foreach (var intern in interns)
         {
             var scores = surgeries.SelectMany(surgery => new[] { "main", "first", "second" }
-                .Select(role => matchResults.FirstOrDefault(r => r.InternId == intern.InternId && r.SurgeryId == surgery.Surgery_id && r.Role == role)?.MatchScore ?? 0)
+                .Select(role => matchResults.FirstOrDefault(r => r.InternId == intern.Id && r.SurgeryId == surgery.Surgery_id && r.Role == role)?.MatchScore ?? 0)
                 .Select(matchScore => $"{matchScore:F2}")).ToArray();
 
-            _logger.LogInformation("{InternName}\t{Scores}", intern.InternName, string.Join("\t", scores));
+            _logger.LogInformation("{Internid}\t{Scores}", $"{intern.Id}", string.Join("\t", scores));
         }
 
         // Prepare variables and constraints for the solution
@@ -244,30 +282,35 @@ public class Algorithm
             {
                 foreach (var intern in interns)
                 {
-                    var matchScore = MatchCalculator.CalculateMatchScore(intern, surgery, detailedSyllabuses[intern.InternId], weights, role, _logger);
-                    var variable = model.NewBoolVar($"{intern.InternId}{surgery.Surgery_id}{role}");
-                    variables[(intern.InternId, surgery.Surgery_id, role)] = variable;
-                    objectiveTerms.Add(variable * (int)(matchScore * 100));
+                    var matchScore = matchResults.FirstOrDefault(r => r.InternId == intern.Id && r.SurgeryId == surgery.Surgery_id && r.Role == role)?.MatchScore ?? 0;
+                    var variable = model.NewBoolVar($"{intern.Id}{surgery.Surgery_id}{role}");
+                    variables[(intern.Id, surgery.Surgery_id, role)] = variable;
+                    if (matchScore > 0)
+                    {
+                        objectiveTerms.Add(variable * (int)(matchScore * 100));
+                    }
                 }
             }
         }
 
         model.Maximize(LinearExpr.Sum(objectiveTerms.ToArray()));
 
+        // Add constraints to ensure each intern can only participate in one role per surgery
         foreach (var surgery in surgeries)
         {
             foreach (var intern in interns)
             {
-                var roleVariables = new[] { "main", "first", "second" }.Select(role => variables[(intern.InternId, surgery.Surgery_id, role)]).ToArray();
+                var roleVariables = new[] { "main", "first", "second" }.Select(role => variables[(intern.Id, surgery.Surgery_id, role)]).ToArray();
                 model.Add(LinearExpr.Sum(roleVariables) <= 1);
             }
         }
 
+        // Ensure exactly one intern is assigned to each role per surgery
         foreach (var surgery in surgeries)
         {
             foreach (var role in new[] { "main", "first", "second" })
             {
-                var roleVariables = interns.Select(intern => variables[(intern.InternId, surgery.Surgery_id, role)]).ToArray();
+                var roleVariables = interns.Select(intern => variables[(intern.Id, surgery.Surgery_id, role)]).ToArray();
                 model.Add(LinearExpr.Sum(roleVariables) == 1);
             }
         }
@@ -292,21 +335,21 @@ public class Algorithm
                 {
                     foreach (var intern in interns)
                     {
-                        if (solver.Value(variables[(intern.InternId, surgery.Surgery_id, role)]) == 1)
+                        if (solver.Value(variables[(intern.Id, surgery.Surgery_id, role)]) == 1)
                         {
                             switch (role)
                             {
                                 case "main":
-                                    assignment.MainInternId = intern.InternId;
-                                    _logger.LogInformation($"  {role}: Intern {intern.InternName} ({intern.InternId})");
+                                    assignment.MainInternId = intern.Id;
+                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                                 case "first":
-                                    assignment.FirstAssistantInternId = intern.InternId;
-                                    _logger.LogInformation($"  {role}: Intern {intern.InternName} ({intern.InternId})");
+                                    assignment.FirstAssistantInternId = intern.Id;
+                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                                 case "second":
-                                    assignment.SecondAssistantInternId = intern.InternId;
-                                    _logger.LogInformation($"  {role}: Intern {intern.InternName} ({intern.InternId})");
+                                    assignment.SecondAssistantInternId = intern.Id;
+                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                             }
                         }
@@ -324,5 +367,3 @@ public class Algorithm
         return optimalAssignments;
     }
 }
-
-
