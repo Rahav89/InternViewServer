@@ -32,6 +32,19 @@ namespace InternViewServer.Models
             return dbs.AddSurgery(this);
 
         }
+
+        // מחיקה של ניתוח מלוח ניתוחים- מנהל 
+        static public int DeleteSurgeryFromSurgeriesSchedule(int surgery_id)
+        {
+            DBservices dbs = new DBservices();
+            if (dbs.DeleteSurgeryFromSurgeriesSchedule(surgery_id) == 1)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
+
         //static public List<Dictionary<string, object>> GetAllSurgeries()
         //{
         //    DBservices dbs = new DBservices();

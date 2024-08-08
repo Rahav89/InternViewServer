@@ -92,9 +92,10 @@ namespace InternViewServer.Controllers
         }
 
         // DELETE api/<SurgeriesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("DeleteSurgeryFromSurgeriesSchedule/{id}")]
+        public int DeleteSurgeryFromSurgeriesSchedule(int id)
         {
+            return Surgeries.DeleteSurgeryFromSurgeriesSchedule(id);
         }
     }
 }
