@@ -78,7 +78,7 @@ namespace InternViewServer.Controllers
         //!!for Procedure In Surgery
         // POST api/<SurgeriesController>
         [HttpPost]
-        [Route("AddProcedureInSurgery")]//Use Resource routing
+        [Route("AddProcedureInSurgery/{surgery_id}/{procedure_Id}")]//Use Resource routing
         public bool AddProcedureInSurgery(int surgery_id, int procedure_Id)
         {
             return Surgeries.AddProcedureInSurgery(surgery_id , procedure_Id) ;
