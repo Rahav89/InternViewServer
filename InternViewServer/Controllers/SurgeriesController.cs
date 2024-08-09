@@ -11,7 +11,7 @@ namespace InternViewServer.Controllers
     {
         // GET: api/<SurgeriesController>
         [HttpGet]
-        [Route("GetAllSurgeries/")]
+        [Route("GetAllSurgeriesWithProcedures/")]
 
         public List<Dictionary<string, object>> GetAllSurgeriesWithProcedures()
         {
@@ -90,6 +90,13 @@ namespace InternViewServer.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
+
+        [HttpPut("UpdateSurgeries/{id}")]
+        public bool put(int id, [FromBody] Surgeries surgeries)
+        {
+            surgeries.Surgery_id = id;
+            return (surgeries.UpdateSurgeries() == 1);
+        } 
 
         // DELETE api/<SurgeriesController>/5
         [HttpDelete("DeleteSurgeryFromSurgeriesSchedule/{id}")]

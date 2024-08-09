@@ -40,6 +40,7 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.GetInternByID(internID);
         }
+
         //פונקציה של התחברות לפי תעודת זהות וסיסמא
         static public Intern LogIn(int id, string password)
         {

@@ -1624,6 +1624,42 @@
         }
 
 
+        ////--------------------------------------------------------------------------------------------------
+        ////This method update a Surgery to the Surgery table 
+        ////--------------------------------------------------------------------------------------------------
+        public int UpdateSurgeries(Surgeries surgeries)
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB"); // create the connection
+                Dictionary<string, object> paramDic = new Dictionary<string, object>();
+                paramDic.Add("@Patient_age", surgeries.Patient_age);
+                paramDic.Add("@Surgery_id", surgeries.Surgery_id);
+                paramDic.Add("@Difficulty_level", surgeries.Difficulty_level);
+                paramDic.Add("@Case_number", surgeries.Case_number);
+                paramDic.Add("@Surgery_date", surgeries.Surgery_date);
+                paramDic.Add("@Hospital_name", surgeries.Hospital_name);
+
+                cmd = CreateCommandWithStoredProcedure("SP_UpdateSurgeries", con, paramDic); // create the command
+                int numEffected = cmd.ExecuteNonQuery(); // execute the command
+                return numEffected; // return the number of records affected
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex; // Rethrow the exception after logging it
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed in the finally block
+                }
+            }
+        }
         //-----------------------------------
         //Get Future Surgeries - FOT THE OLD ALGO
         //-----------------------------------

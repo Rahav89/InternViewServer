@@ -45,6 +45,13 @@ namespace InternViewServer.Models
         }
 
 
+        //Method to update Surgeries details
+        public int UpdateSurgeries()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateSurgeries(this);
+        }
+
         //static public List<Dictionary<string, object>> GetAllSurgeries()
         //{
         //    DBservices dbs = new DBservices();
