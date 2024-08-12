@@ -4,9 +4,9 @@ namespace InternViewServer.Models
 {
     public class InternSchedule
     {
-        public DateTime DutyDate { get; set; }     // Unique identifier for each schedule entry
-        public int Intern_id { get; set; }       // Reference to the intern's ID from Interns_Table
-
+        public DateTime DutyDate { get; set; }     // Date
+        public int Intern_id { get; set; }
+        // Date
         static public List<InternSchedule> GetAllInternsShiftsSchedule()
         {
             DBservices dbs = new DBservices();
@@ -30,5 +30,6 @@ namespace InternViewServer.Models
             return dbs.GetInternsOnDutyDayBefore(GivenDate);
         }
     }
+
 
 }
