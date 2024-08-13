@@ -318,6 +318,9 @@ public class Algorithm
         CpSolver solver = new CpSolver();
         CpSolverStatus status = solver.Solve(model);
 
+        // הוספת לוג להדפסת הסטטוס של הפתרון
+        _logger.LogInformation($"Solver status: {status}");
+
         var optimalAssignments = new List<OptimalAssignment>();
 
         if (status == CpSolverStatus.Optimal || status == CpSolverStatus.Feasible)
