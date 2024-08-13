@@ -25,12 +25,12 @@ public class OptimalAssignment
 public static class MatchCalculator
 {
     public static double CalculateMatchScore(
-    Intern intern,
-    Surgeries surgery,
-    List<Dictionary<string, object>> syllabusData,
-    Algorithm_Weights weights,
-    string role,
-    ILogger logger)
+        Intern intern,
+        Surgeries surgery,
+        List<Dictionary<string, object>> syllabusData,
+        Algorithm_Weights weights,
+        string role,
+        ILogger logger)
     {
         // Null check for intern and surgery
         if (intern == null || surgery == null)
@@ -159,7 +159,6 @@ public static class MatchCalculator
         return matchScore;
     }
 
-
     public static List<MatchResult> CalculateAllMatches(
         List<Intern> interns,
         List<Surgeries> surgeries,
@@ -206,9 +205,7 @@ public static class MatchCalculator
 
         return results;
     }
-
 }
-
 
 public class Algorithm
 {
@@ -255,6 +252,19 @@ public class Algorithm
         }
 
         var matchResults = MatchCalculator.CalculateAllMatches(interns, surgeries, detailedSyllabuses, weights, _logger);
+
+        // Log the match scores matrix
+        _logger.LogInformation("Match Scores Matrix:");
+        _logger.LogInformation("\tSurgery-Role:\t{Roles}", string.Join("\t", surgeries.SelectMany(s => new[] { "main", "first", "second" }, (s, role) => $"{s.Surgery_id}-{role}")));
+
+        foreach (var intern in interns)
+        {
+            var scores = surgeries.SelectMany(surgery => new[] { "main", "first", "second" }
+                .Select(role => matchResults.FirstOrDefault(r => r.InternId == intern.Id && r.SurgeryId == surgery.Surgery_id && r.Role == role)?.MatchScore ?? 0)
+                .Select(matchScore => $"{matchScore:F2}")).ToArray();
+
+            _logger.LogInformation("{Internid}\t{Scores}", $"{intern.Id}", string.Join("\t", scores));
+        }
 
         CpModel model = new CpModel();
         Dictionary<(int, int, string), IntVar> variables = new Dictionary<(int, int, string), IntVar>();
@@ -324,12 +334,15 @@ public class Algorithm
                             {
                                 case "main":
                                     assignment.MainInternId = intern.Id;
+                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                                 case "first":
                                     assignment.FirstAssistantInternId = intern.Id;
+                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                                 case "second":
                                     assignment.SecondAssistantInternId = intern.Id;
+                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                             }
                         }
@@ -384,4 +397,3 @@ public class Algorithm
         return optimalAssignments;
     }
 }
-
