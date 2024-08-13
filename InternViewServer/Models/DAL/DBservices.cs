@@ -519,13 +519,13 @@
                         // Create a new surgery entry
                         currentSurgery = new Dictionary<string, object>
                 {
-                    {"Surgery_id", surgeryId},
-                    {"procedureName", new List<string> { Convert.ToString(dataReader["procedureName"]) }},
-                    {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
-                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
-                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
-                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
-                    {"Case_number", Convert.ToInt32(dataReader["Case_number"])}
+                        {"Surgery_id", surgeryId},
+                        {"procedureName", new List<string> { Convert.ToString(dataReader["procedureName"]) }},
+                        {"Hospital_name", Convert.ToString(dataReader["Hospital_name"])},
+                        {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+                        {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                        {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                        {"Case_number", Convert.ToInt32(dataReader["Case_number"])}
                 };
                         surgeries.Add(currentSurgery);
                         lastSurgeryId = surgeryId; // Update the last surgery ID
@@ -801,53 +801,52 @@
         }
 
         ////--------------------------------------------------------------------------------------------------
-        ////UpdateInternInSurgery - -FOR THE OLD ALGO
+        ////Update OR ADD internInSurgery - 
         ////--------------------------------------------------------------------------------------------------
-        //public bool UpdateInternInSurgery(SurgeryMatch match)
-        //{
-        //    SqlConnection con = null;
-        //    SqlCommand cmd;
+        public bool UpdateOrAddInternInSurgery(InternInSurgery match)
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
 
-        //    try
-        //    {
-        //        con = connect("myProjDB");  // Create the connection
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Write to log
-        //        throw ex; // Rethrow the original exception or log it properly
-        //    }
+            try
+            {
+                con = connect("myProjDB");  // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Write to log
+                throw ex; // Rethrow the original exception or log it properly
+            }
 
-        //        Dictionary<string, object> paramDic = new Dictionary<string, object>();
-        //        paramDic.Add("@Surgery_id", match.Surgery_id);
-        //        paramDic.Add("@Intern_id", match.Intern_id);
-        //        paramDic.Add("@Intern_role", match.Intern_role);
-        //        paramDic.Add("@newMatch", match.newMatch);
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+            paramDic.Add("@Surgery_id", match.Surgery_id);
+            paramDic.Add("@Intern_id", match.Intern_id);
+            paramDic.Add("@Intern_role", match.Intern_role);           
 
-        //        cmd = CreateCommandWithStoredProcedure("SP_UpdateInternInSurgery", con, paramDic); // create the command
-        //        var returnParameter = cmd.Parameters.Add("@Result", SqlDbType.Int);//- ערך חוזר
-        //        returnParameter.Direction = ParameterDirection.ReturnValue;
+            cmd = CreateCommandWithStoredProcedure("SP_UpdateInternInSurgery", con, paramDic); // create the command
+            var returnParameter = cmd.Parameters.Add("@Result", SqlDbType.Int); //- ערך חוזר
+            returnParameter.Direction = ParameterDirection.ReturnValue;
 
-        //    try
-        //    {
-        //        cmd.ExecuteNonQuery();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // write to log
-        //        throw (ex);
-        //    }
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw (ex);
+            }
 
-        //    finally
-        //    {
-        //        if (con != null)
-        //        {
-        //            // close the db connection
-        //            con.Close();
-        //        }
-        //    }
-        //    return Convert.ToInt32(returnParameter.Value) == 1;
-        //}
+            finally
+            {
+                if (con != null)
+                {
+                    // close the db connection
+                    con.Close();
+                }
+            }
+            return Convert.ToInt32(returnParameter.Value) == 1;
+        }
 
         ////--------------------------------------------------------------------------------------------------
         ////get the interns of given ssurgery -FOR THE OLD ALGO, BUT CAN BE USEFUL
@@ -2063,6 +2062,95 @@
                 {
                     // close the db connection
                     con.Close();
+                }
+            }
+        }
+
+
+        public List<Dictionary<string, object>> AllSurgeriesWithInterns()
+        {
+            SqlConnection con = null;
+            SqlCommand cmd;
+
+            try
+            {
+                con = connect("myProjDB");  // Create the connection
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                throw ex;
+            }
+
+            Dictionary<string, object> paramDic = new Dictionary<string, object>();
+
+            cmd = CreateCommandWithStoredProcedure("AllSurgeriesWithInterns", con, paramDic); // Create the command
+
+            List<Dictionary<string, object>> surgeries = new List<Dictionary<string, object>>();
+            int? lastSurgeryId = null;  // To track the last processed surgery ID
+            Dictionary<string, object> currentSurgery = null;
+
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection); // Execute the reader
+                while (dataReader.Read())
+                {
+                    int surgeryId = Convert.ToInt32(dataReader["Surgery_id"]);
+
+                    // Check if this is a new surgery
+                    if (lastSurgeryId == null || surgeryId != lastSurgeryId)
+                    {
+                        // Create a new surgery entry
+                        currentSurgery = new Dictionary<string, object>
+                {
+                    {"Surgery_id", surgeryId},
+                    {"Case_number", Convert.ToInt32(dataReader["Case_number"])},
+                    {"Patient_age", Convert.ToInt32(dataReader["Patient_age"])},
+                    {"Surgery_date", Convert.ToDateTime(dataReader["Surgery_date"])},
+                    {"Difficulty_level", Convert.ToInt32(dataReader["Difficulty_level"])},
+                    {"procedureName", new List<string> { Convert.ToString(dataReader["procedureName"]) }},
+                    {"Lead_Surgeon", new Dictionary<string, object>
+                        {
+                            {"Id", Convert.ToInt32(dataReader["Lead_Surgeon_Id"])},
+                            {"Name", Convert.ToString(dataReader["Lead_Surgeon_Name"])}
+                        }
+                    },
+                    {"First_Assistant", new Dictionary<string, object>
+                        {
+                            {"Id", Convert.ToInt32(dataReader["First_Assistant_Id"])},
+                            {"Name", Convert.ToString(dataReader["First_Assistant_Name"])}
+                        }
+                    },
+                    {"Second_Assistant", new Dictionary<string, object>
+                        {
+                            {"Id", Convert.ToInt32(dataReader["Second_Assistant_Id"])},
+                            {"Name", Convert.ToString(dataReader["Second_Assistant_Name"])}
+                        }
+                    }
+                };
+
+                        surgeries.Add(currentSurgery);
+                        lastSurgeryId = surgeryId; // Update the last surgery ID
+                    }
+                    else
+                    {
+                        // Append the procedure name to the existing entry's procedureName list
+                        List<string> procedures = currentSurgery["procedureName"] as List<string>;
+                        procedures.Add(Convert.ToString(dataReader["procedureName"]));
+                    }
+                }
+                return surgeries;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                throw ex;
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close(); // Ensure the connection is closed
                 }
             }
         }

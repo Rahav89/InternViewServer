@@ -23,12 +23,15 @@ namespace InternViewServer.Controllers
             return Models.Intern.AllInternSurgeries(internId);
         }
 
-        //[HttpPut]
-        //[Route("UpdateInternInSurgery")]
-        //public bool UpdateInternInSurgery(SurgeryMatch match)
-        //{
-        //    return Models.Intern.UpdateInternInSurgery(match);
-        //}
+
+        //!!!!!!for InternInSurgery
+        [HttpPut]
+        [Route("UpdateInternInSurger")]
+        public bool UpdateOrAddInternInSurgery([FromBody] InternInSurgery match)
+        {
+            return Models.InternInSurgery.UpdateOrAddInternInSurgery(match);
+        }
+        //!!!!!!for InternInSurgery
 
         [HttpGet]
         [Route("FiveRecentInternSurgeries")]

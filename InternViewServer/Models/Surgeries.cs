@@ -19,7 +19,13 @@ namespace InternViewServer.Models
             DBservices dbs = new DBservices();
             return dbs.GetAllSurgeriesWithProcedures();
         }
-        
+
+        static public List<Dictionary<string, object>> AllSurgeriesWithInterns()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.AllSurgeriesWithInterns();
+        }
+
         static public List<Surgeries> GetSurgeriesByID(int surgeryID)
         {
             DBservices dbs = new DBservices();

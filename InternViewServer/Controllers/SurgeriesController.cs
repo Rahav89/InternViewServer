@@ -18,6 +18,15 @@ namespace InternViewServer.Controllers
             return Models.Surgeries.GetAllSurgeriesWithProcedures();
         }
 
+        // GET: api/<SurgeriesController>
+        [HttpGet]
+        [Route("AllSurgeriesWithInterns/")]
+
+        public List<Dictionary<string, object>> AllSurgeriesWithInterns()
+        {
+            return Models.Surgeries.AllSurgeriesWithInterns();
+        }
+
         [HttpGet]
         [Route("GetSurgeriesByID/{surgeryID}")]//Use Resource routing
         public List<Surgeries> GetSurgeriesByID(int surgeryID)
