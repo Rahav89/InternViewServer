@@ -803,7 +803,7 @@
         ////--------------------------------------------------------------------------------------------------
         ////Update OR ADD internInSurgery - 
         ////--------------------------------------------------------------------------------------------------
-        public bool UpdateOrAddInternInSurgery(SurgeryMatch match)
+        public bool UpdateOrAddInternInSurgery(InternInSurgery match)
         {
             SqlConnection con = null;
             SqlCommand cmd;

@@ -349,7 +349,7 @@ public class Algorithm
         {
             if (assignment.MainInternId.HasValue)
             {
-                var mainMatch = new SurgeryMatch
+                var mainMatch = new InternInSurgery
                 {
                     Surgery_id = assignment.SurgeryId,
                     Intern_id = assignment.MainInternId.Value,
@@ -360,7 +360,7 @@ public class Algorithm
 
             if (assignment.FirstAssistantInternId.HasValue)
             {
-                var firstAssistantMatch = new SurgeryMatch
+                var firstAssistantMatch = new InternInSurgery
                 {
                     Surgery_id = assignment.SurgeryId,
                     Intern_id = assignment.FirstAssistantInternId.Value,
@@ -371,7 +371,7 @@ public class Algorithm
 
             if (assignment.SecondAssistantInternId.HasValue)
             {
-                var secondAssistantMatch = new SurgeryMatch
+                var secondAssistantMatch = new InternInSurgery
                 {
                     Surgery_id = assignment.SurgeryId,
                     Intern_id = assignment.SecondAssistantInternId.Value,

@@ -27,9 +27,9 @@ namespace InternViewServer.Controllers
         //!!!!!!for InternInSurgery
         [HttpPut]
         [Route("UpdateInternInSurger")]
-        public bool UpdateOrAddInternInSurgery([FromBody] SurgeryMatch match)
+        public bool UpdateOrAddInternInSurgery([FromBody] InternInSurgery match)
         {
-            return Models.Intern.UpdateOrAddInternInSurgery(match);
+            return Models.InternInSurgery.UpdateOrAddInternInSurgery(match);
         }
         //!!!!!!for InternInSurgery
 
