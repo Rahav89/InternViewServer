@@ -17,7 +17,7 @@ namespace InternViewServer.Controllers
             _loggerFactory = loggerFactory;
         }
 
-        [HttpGet("GetOptimalAssignments/{startDate}/{endDate}")]
+        [HttpPut("GetOptimalAssignments/{startDate}/{endDate}")]
         public ActionResult<IEnumerable<OptimalAssignment>> GetOptimalAssignments(string startDate, string endDate)
         {
             // Create a logger specifically for the Algorithm class
