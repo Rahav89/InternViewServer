@@ -215,16 +215,19 @@ public class Algorithm
     private readonly ILogger<Algorithm> _logger;
     private readonly DBservices dbs;
 
+    // Define the role constants
+    const string MAIN = "מנתח ראשי";
+    const string FIRST_ASSISTANT = "עוזר ראשון";
+    const string SECOND_ASSISTANT = "עוזר שני";
+
     public Algorithm(ILogger<Algorithm> logger)
     {
         _logger = logger;
         dbs = new DBservices();
     }
 
-
     public List<OptimalAssignment> CalculateOptimalAssignments(string startDate, string endDate)
     {
-        // Fetch surgeries within the date range
         var surgeries = dbs.GetSurgeriesByTime(startDate, endDate);
         if (surgeries == null || !surgeries.Any())
         {
@@ -232,7 +235,6 @@ public class Algorithm
             return new List<OptimalAssignment>();
         }
 
-        // Fetch all interns
         var interns = dbs.ReadIntern();
         if (interns == null || !interns.Any())
         {
@@ -240,10 +242,8 @@ public class Algorithm
             return new List<OptimalAssignment>();
         }
 
-        // Prepare weights for scoring
         Algorithm_Weights weights = dbs.Read_Algorithm_Weights();
 
-        // Initialize detailed syllabuses
         var detailedSyllabuses = new Dictionary<int, List<Dictionary<string, object>>>();
         foreach (var intern in interns)
         {
@@ -254,23 +254,8 @@ public class Algorithm
             }
         }
 
-        // Calculate all matches using the match calculator
         var matchResults = MatchCalculator.CalculateAllMatches(interns, surgeries, detailedSyllabuses, weights, _logger);
 
-        // Log match results for debugging
-        _logger.LogInformation("Match Scores Matrix:");
-        _logger.LogInformation("\tSurgery-Role:\t{Roles}", string.Join("\t", surgeries.SelectMany(s => new[] { "main", "first", "second" }, (s, role) => $"{s.Surgery_id}-{role}")));
-
-        foreach (var intern in interns)
-        {
-            var scores = surgeries.SelectMany(surgery => new[] { "main", "first", "second" }
-                .Select(role => matchResults.FirstOrDefault(r => r.InternId == intern.Id && r.SurgeryId == surgery.Surgery_id && r.Role == role)?.MatchScore ?? 0)
-                .Select(matchScore => $"{matchScore:F2}")).ToArray();
-
-            _logger.LogInformation("{Internid}\t{Scores}", $"{intern.Id}", string.Join("\t", scores));
-        }
-
-        // Prepare variables and constraints for the solution
         CpModel model = new CpModel();
         Dictionary<(int, int, string), IntVar> variables = new Dictionary<(int, int, string), IntVar>();
 
@@ -295,7 +280,6 @@ public class Algorithm
 
         model.Maximize(LinearExpr.Sum(objectiveTerms.ToArray()));
 
-        // Add constraints to ensure each intern can only participate in one role per surgery
         foreach (var surgery in surgeries)
         {
             foreach (var intern in interns)
@@ -305,7 +289,6 @@ public class Algorithm
             }
         }
 
-        // Ensure exactly one intern is assigned to each role per surgery
         foreach (var surgery in surgeries)
         {
             foreach (var role in new[] { "main", "first", "second" })
@@ -341,15 +324,12 @@ public class Algorithm
                             {
                                 case "main":
                                     assignment.MainInternId = intern.Id;
-                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                                 case "first":
                                     assignment.FirstAssistantInternId = intern.Id;
-                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                                 case "second":
                                     assignment.SecondAssistantInternId = intern.Id;
-                                    _logger.LogInformation($"  {role}: Intern {intern.First_name} {intern.Last_name} ({intern.Id})");
                                     break;
                             }
                         }
@@ -364,6 +344,44 @@ public class Algorithm
             _logger.LogWarning("No solution found.");
         }
 
+        // Loop through each assignment and update the database - UpdateOrAddInternInSurgery
+        foreach (var assignment in optimalAssignments)
+        {
+            if (assignment.MainInternId.HasValue)
+            {
+                var mainMatch = new SurgeryMatch
+                {
+                    Surgery_id = assignment.SurgeryId,
+                    Intern_id = assignment.MainInternId.Value,
+                    Intern_role = MAIN
+                };
+                dbs.UpdateOrAddInternInSurgery(mainMatch);
+            }
+
+            if (assignment.FirstAssistantInternId.HasValue)
+            {
+                var firstAssistantMatch = new SurgeryMatch
+                {
+                    Surgery_id = assignment.SurgeryId,
+                    Intern_id = assignment.FirstAssistantInternId.Value,
+                    Intern_role = FIRST_ASSISTANT
+                };
+                dbs.UpdateOrAddInternInSurgery(firstAssistantMatch);
+            }
+
+            if (assignment.SecondAssistantInternId.HasValue)
+            {
+                var secondAssistantMatch = new SurgeryMatch
+                {
+                    Surgery_id = assignment.SurgeryId,
+                    Intern_id = assignment.SecondAssistantInternId.Value,
+                    Intern_role = SECOND_ASSISTANT
+                };
+                dbs.UpdateOrAddInternInSurgery(secondAssistantMatch);
+            }
+        }
+
         return optimalAssignments;
     }
 }
+

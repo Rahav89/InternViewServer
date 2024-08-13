@@ -62,13 +62,14 @@ namespace InternViewServer.Models
         }
 
         //עדכון של מתמחה בניתוח
+        //!!!!!!InternInSurgery
+        static public bool UpdateOrAddInternInSurgery(SurgeryMatch match)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateOrAddInternInSurgery(match);
 
-        //static public bool UpdateInternInSurgery(SurgeryMatch match)
-        //{
-        //    DBservices dbs = new DBservices();
-        //    return dbs.UpdateInternInSurgery(match);
-
-        //}
+        }
+        //!!!!!!for InternInSurgery
 
         //רשימה של  חמשת הניתוחים של מתמחה
         static public List<SurgeriesOfIntern> FiveRecentInternSurgeries(int internId)
